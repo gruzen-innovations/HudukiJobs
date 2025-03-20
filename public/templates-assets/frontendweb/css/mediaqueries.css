@@ -1,0 +1,29 @@
+
+/* only small desktops */
+/* tablets */
+/* only small tablets */
+ @media only screen and (min-width: 992px) and (max-width: 1199px) {
+    
+}
+ @media (min-width: 768px) and (max-width: 991px) {
+   
+}
+/* mobile or only mobile */
+ @media (max-width: 767px) {
+  .cat_img_div {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    padding-bottom: 76px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    margin-left: 133px;
+}
+.dropbtn {
+    background-color: white;
+    color: black;
+    margin-left: 209px;
+    font-size: 31px;
+}
+}
+ 
