@@ -137,8 +137,6 @@ Route::get('purchased-history', [OrderHistoryController::class, 'index']);
 Route::get('monthly-sales-report', [SalesReportController::class, 'show_monthly_sales_report']);
 Route::get('yearly-sales-report', [SalesReportController::class, 'show_yearly_sales_report']);
 
-
-
 //
 Route::get('add_product_main_specification/{id}', [ProductSpecificationController::class, 'add_product_main_specification']);
 Route::post('/add_main_specification', [ProductSpecificationController::class, 'add_main_specification']);
@@ -196,33 +194,6 @@ Route::post('store-advance-skills', [HMBIController::class, 'store_advance_skill
 Route::get('edit-advance-skills/{id}', [HMBIController::class, 'edit_advance_skills']);
 Route::post('update-advance-skills', [HMBIController::class, 'update_advance_skills']);
 Route::get('delete-advance-skills/{id}', [HMBIController::class, 'delete_advance_skills']);
-// courses
-Route::get('course', [CourseController::class, 'course_index']);
-Route::get('addNewCourse', [CourseController::class, 'add_course']);
-Route::post('saveCourse', [CourseController::class, 'saveCourse']);
-Route::get('editCourse/{id}', [CourseController::class, 'editCourse']);
-Route::post('updateCourse', [CourseController::class, 'updateCourse']);
-Route::get('deleteCourse/{id}', [CourseController::class, 'deleteCourse']);
-Route::get('syllabus/{id}', [TopicsController::class, 'syllabus_index']);
-
-// Questions Bank
-
-Route::get('ViewQuestionsBank/{id}', [QuestionsBankController::class, 'ViewQuestionsBank']);
-Route::get('add_question/{id}', [QuestionsBankController::class, 'add_question']);
-Route::post('saveQuestion', [QuestionsBankController::class, 'saveQuestion']);
-Route::get('editquestions/{id}', [QuestionsBankController::class, 'editquestions']);
-Route::post('updateQuestion', [QuestionsBankController::class, 'updateQuestion']);
-Route::get('delete-questions/{id}', [QuestionsBankController::class, 'delete_questions']);
-
-// topics
-Route::get('topics/{id}', [TopicsController::class, 'topics_index']);
-Route::get('addNewTopic/{id}', [TopicsController::class, 'addNewTopic']);
-Route::post('saveTopic', [TopicsController::class, 'saveTopic']);
-Route::get('editTopic/{id}', [TopicsController::class, 'editTopic']);
-Route::post('updateTopics', [TopicsController::class, 'updateTopics']);
-Route::post('getChapterUnderCourse', [TopicsController::class, 'getChapterUnderCourse'])->name('getChapterUnderCourse');
-Route::post('getTopicUnderChapter', [TopicsController::class, 'getTopicUnderChapter'])->name('getTopicUnderChapter');
-Route::get('deleteTopic/{id}', [TopicsController::class, 'delete_Topic']);
 
 //test api resp
 Route::get('test_resp', [HMBIController::class, 'test_resp']);

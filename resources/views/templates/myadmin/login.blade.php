@@ -1,18 +1,9 @@
 <!doctype html>
 
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<html class="no-js" lang="">
 
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
-
-<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-
-<!--[if gt IE 8]><!--> 
-
-<html class="no-js" lang=""> <!--<![endif]-->
-
-<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-    
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -40,75 +31,48 @@
 
 </head>
 
-<body style="background: steelblue;">
+<body style="background: url('{{ asset('templates-assets/myadminweb/images/bg_image.jpg') }}') no-repeat center center fixed; background-size: cover;">
 
     <div class="login">
 
         <div class="col-lg-12" style="text-align: center;">
-
-            <div class="logo">
-
-                <!-- <a class="navbar-brand" href="myadmin"><img src="{{asset('templates-assets/myadminweb/images/homelogo.png')}}" alt="Logo"></a> -->
-
-            </div>
-
-            
-
             <div class="card" style="margin-top: 15%;">
-
                 <p>Sign in to continue</p>
 
                 <div class="card-body card-block">
-
                     @if (Session::has('error'))
-
-                            <div class="alert alert-warning">{{ Session::get('error') }}</div>
-
-                            @endif
+                        <div class="alert alert-warning">{{ Session::get('error') }}</div>
+                    @endif
 
                     {!! Form::open(['method' => 'POST', 'url' => 'adminlogin']) !!}
 
-                        <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
-
-                            <div class="input-group">
-
-                                <div class="input-group-addon"><i class="fa fa-user"></i></div>
-
-                                <input type="text" id="username" name="username" placeholder="Username" class="form-control" value="{{old('username')}}"><br/>
-
-                                <small class="text-danger">{{ $errors->first('username') }}</small>
-
-                            </div>
-
+                    <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }}">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-user"></i></div>
+                            <input type="text" id="username" name="username" placeholder="Username" class="form-control" value="{{old('username')}}"><br/>
+                            <small class="text-danger">{{ $errors->first('username') }}</small>
                         </div>
+                    </div>
 
-                        
-
-                        <div class="form-group">
-
-                            <div class="input-group">
-
-                                <div class="input-group-addon"><i class="fa fa-lock"></i></div>
-
-                                <input type="password" id="password" name="password" placeholder="Password" class="form-control"><br/>
-
-                                <small class="text-danger">{{ $errors->first('password') }}</small>
-
-                            </div>
-
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon"><i class="fa fa-lock"></i></div>
+                            <input type="password" id="password" name="password" placeholder="Password" class="form-control"><br/>
+                            <small class="text-danger">{{ $errors->first('password') }}</small>
                         </div>
+                    </div>
 
-                        <div class="form-actions form-group">
-                            <button type="submit" class="btn btn-success btn-sm" id="btnlogin">SIGN IN</button>
-                        </div>                       
-                     {!! Form::close() !!}
+                    <div class="form-actions form-group">
+                        <button type="submit" class="btn btn-success btn-sm" id="btnlogin">SIGN IN</button>
+                    </div>
+
+                    {!! Form::close() !!}
                     <!-- <a href="#">Forgot Password?</a> -->
                 </div>
             </div>
-        <br/>
-
-              <!--<h4 id="create_account"> Powered by <a href="https://grobiz.app/" target="_blank" id="create_account"><u> Grobiz</u></a></h4>  -->
+            <br/>
         </div>
     </div>
 </body>
+
 </html>
