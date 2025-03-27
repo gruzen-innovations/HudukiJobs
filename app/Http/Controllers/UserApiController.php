@@ -126,8 +126,35 @@ class UserApiController extends Controller
                             $UserRegister->profile_photo = '';
                 }
                 $UserRegister->login_otp = "";
+                $UserRegister->company_name = $request->get('company_name', '');
+                $UserRegister->company_register_date = $request->get('company_register_date') ?: null;
+                if (!empty($request->file('company_logo'))) {
+                $file = $request->file('company_logo');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/company logo');
+                $file->move($path, $filename);
+                $UserRegister->company_logo = $filename;
+                }else{
+                $UserRegister->company_logo = '';
+                }
+                if (!empty($request->file('company_photo'))) {
+                $file = $request->file('company_photo');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/company photo');
+                $file->move($path, $filename);
+                $UserRegister->company_photo = $filename;
+                }else{
+                $UserRegister->company_photo = '';
+                }
+                $UserRegister->company_description = $request->get('company_description', '');
+                $UserRegister->company_employee_range = $request->get('company_employee_range', '');
+                $UserRegister->company_type = $request->get('company_type', '');
+                $UserRegister->company_headquarter = $request->get('company_headquarter', '');
+                $UserRegister->company_website = $request->get('company_website', '');
+                $UserRegister->company_address = $request->get('company_address', '');
+                $UserRegister->language = $request->get('language', '');
                 $UserRegister->register_date = date('Y-m-d');
-                $UserRegister->company_register_date = '';
+              
                 $UserRegister->save();
                 $inserted_id = $UserRegister->id;
                 
