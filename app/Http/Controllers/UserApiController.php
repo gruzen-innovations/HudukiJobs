@@ -334,6 +334,8 @@ class UserApiController extends Controller
                     ]);
         }
     }
+
+    
     
 // Forgot Password
       public function forgotPass(Request $request){
