@@ -21,6 +21,9 @@ Route::post('verify_registration_contact_otp', [UserApiController::class, 'verif
 Route::post('send_registration_email_otp', [UserApiController::class, 'send_registration_email_otp']);
 Route::post('verify_registration_email_otp', [UserApiController::class, 'verify_registration_email_otp']);
 Route::post('login', [UserApiController::class, 'login']);
+Route::post('send_employee_login_otp', [UserApiController::class, 'sendEmployerLoginOtp']);
+Route::post('employee_login', [UserApiController::class, 'employeeLogin']);
+
 
 Route::post('forgot_password', [UserApiController::class, 'forgotPass']);
 Route::post('get_user_profile', [UserApiController::class, 'get_user_profile']);
@@ -31,7 +34,7 @@ Route::post('update_user_profile', [UserApiController::class, 'update_user_profi
 Route::post('employee_profile', [UserApiController::class, 'get_employee_profile']);
 Route::post('update_employee_profile', [UserApiController::class, 'update_employee_profile']);
 //update product new keys
-Route::post('Update_product_new_keys', [FilterApiController::class, 'Update_product_new_keys']);
+// Route::post('Update_product_new_keys', [FilterApiController::class, 'Update_product_new_keys']);
 Route::get('get_Profession_List', [BookingApiController::class, 'get_Profession_List']);
 Route::get('get_skill_list', [BookingApiController::class, 'get_skill_list']);
 Route::get('get_Education_List', [BookingApiController::class, 'get_Education_List']);

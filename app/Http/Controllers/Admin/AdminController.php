@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use DateTime;
 use App\Admin;
 use App\Orders;
