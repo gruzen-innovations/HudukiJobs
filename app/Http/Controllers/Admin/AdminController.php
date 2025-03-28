@@ -84,7 +84,6 @@ class AdminController extends Controller
     public function add_account()
     {
 
-
         $account = Admin::get();
 
         $features = $this->getfeatures();
@@ -149,12 +148,12 @@ class AdminController extends Controller
 
         $this->validate($request, [
             'name' => 'required',
-            'admin_username' => 'required',
+            'username' => 'required',
             'contact' => 'required',
             'email' => 'required'
         ], [
             'name.required' => 'Please enter admin name',
-            'admin_username.required' => 'Please enter username',
+            'username.required' => 'Please enter username',
             'contact.required' => 'Please enter contact number',
             'email.required' => 'Please enter email-id'
         ]);
@@ -165,7 +164,7 @@ class AdminController extends Controller
 
             DB::table('admin_login')
                 ->where('_id', $sid)
-                ->update(['name' => $request->input('name'), 'username' => $request->input('admin_username'), 'contact' => $request->input('contact'), 'email' => $request->input('email')]);
+                ->update(['name' => $request->input('name'), 'username' => $request->input('username'), 'contact' => $request->input('contact'), 'email' => $request->input('email')]);
 
             return redirect('profile')->with('success', "Profile has been Changed Successfully");
         } else {

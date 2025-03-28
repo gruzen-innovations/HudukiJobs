@@ -24,9 +24,6 @@ use App\Http\Controllers\Admin\NotificationsController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\QWPController;
 use App\Http\Controllers\Admin\HMBIController;
-use App\Http\Controllers\Admin\CourseController;
-use App\Http\Controllers\Admin\QuestionsBankController;
-use App\Http\Controllers\Admin\TopicsController;
 
 
 /*
@@ -55,6 +52,7 @@ Route::get('/home', [AdminController::class, 'home']);
 
 // profile
 Route::get('/profile', [AdminController::class, 'index']);
+Route::post('/update-profile', [AdminController::class, 'update_profile']);
 // Route::get('/register', [AdminController::class, 'register']);
 
 // Account
