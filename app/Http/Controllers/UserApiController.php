@@ -297,7 +297,7 @@ class UserApiController extends Controller
                     ]);
                 } else {
                     if (password_verify($request->get('password'), $password)) {
-                        
+
                         $usersd_statuss = Employee::where('employee_auto_id', $user_id)->get();
                         if ($usersd_statuss->isNotEmpty()) {
                             foreach ($usersd_statuss as $status) {
@@ -422,6 +422,14 @@ class UserApiController extends Controller
             $user->token = $request->token;
             $user->save();
 
+            $usersd_statuss = Employee::where('employee_auto_id', $user->id)->get();
+            if ($usersd_statuss->isNotEmpty()) {
+                foreach ($usersd_statuss as $status) {
+                    $completion_status = $status->completion_status;
+                }
+            } else {
+                $completion_status = 'No';
+            }
 
             // Return login success response
             return response()->json([
@@ -430,7 +438,7 @@ class UserApiController extends Controller
                 'user_id' => $user->id,
                 'mobile_number' => $user->mobile_number,
                 'Register_as' => $user->Register_as,
-                'completion_status' => $user->completion_status,
+                'completion_status' => $completion_status,
             ]);
         } else {
             return response()->json([
