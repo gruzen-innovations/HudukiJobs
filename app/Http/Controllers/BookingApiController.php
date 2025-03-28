@@ -20,6 +20,8 @@ use App\Height;
 use DateTime;
 use DB;
 use Illuminate\Support\Facades\Validator;
+use App\SearchHistory;
+
 
 class BookingApiController extends Controller
 {
@@ -526,6 +528,10 @@ class BookingApiController extends Controller
                 $job_skill = $request->input('job_skill');
                 $job_role = $request->input('job_role');
                 $location = $request->input('location');
+                $walkIn_Interview = $request->input('walkIn_Interview');
+                $date = $request->input('date');
+                $experience = $request->input('experience');
+
 
                 $conditions = array();
 
@@ -534,8 +540,17 @@ class BookingApiController extends Controller
                 $job_skill_ids = [];
 
                 if ($request->get('location') != "") {
-                        $location_ids = explode(',', $request->get('location'));
-                        array_push($conditions, array('field' => 'job_location', 'value' => $location_ids, 'condition' => 'orwhereIn'));
+                        $location_ids = array_map('trim', explode(',', $request->get('location'))); // Trim spaces
+                        $location_conditions = [];
+
+                        foreach ($location_ids as $location) {
+                                $location_conditions[] = ['job_location' => new \MongoDB\BSON\Regex('(^|,)\s*' . preg_quote(
+                                        $location,
+                                        '/'
+                                ) . '\s*(,|$)', 'i')];
+                        }
+
+                        array_push($conditions, ['condition' => 'or', 'value' => $location_conditions]);
                 }
                 if ($request->get('job_role') != "") {
                         $job_role_ids = explode(',', $request->get('job_role'));
@@ -543,12 +558,37 @@ class BookingApiController extends Controller
                 }
                 if ($request->get('job_skill') != "") {
                         $job_skill_ids = explode(',', $request->get('job_skill'));
-                        array_push($conditions, array('field' => 'skills', 'value' => $job_skill_ids, 'condition' => 'orwhereIn'));
+                        $skill_conditions = [];
+
+                        foreach ($job_skill_ids as $skill) {
+                                $skill_conditions[] = ['skills' => new \MongoDB\BSON\Regex("\\b" . trim($skill) . "\\b", 'i')];
+                        }
+
+                        array_push($conditions, ['condition' => 'or', 'value' => $skill_conditions]);
                 }
+                if ($request->get('walkin_interview') != "") {
+                        array_push($conditions, [
+                                'field' => 'walkIn_Interview',
+                                'value' => $request->get('walkin_interview'),
+                                'condition' => 'where'
+                        ]);
+                }
+                if ($request->get('employer_auto_id') != "") {
+                        array_push($conditions, [
+                                'field' => 'employer_auto_id',
+                                'value' => $request->get('employer_auto_id'),
+                                'condition' => 'where'
+                        ]);
+                }
+
                 $joblists = Jobs::where(function ($q) use ($conditions) {
                         foreach ($conditions as $key) {
-                                if ($key['condition'] == "whereIn") {
-                                        $q->whereIn($key['field'], $key['value']);
+                                if ($key['condition'] == 'or') {
+                                        $q->where(function ($subQuery) use ($key) {
+                                                foreach ($key['value'] as $condition) {
+                                                        $subQuery->orWhere($condition);
+                                                }
+                                        });
                                 } elseif ($key['condition'] == "orwhereIn") {
                                         $q->orwhereIn($key['field'], $key['value']);
                                 } elseif ($key['condition'] == ">where") {
@@ -568,6 +608,7 @@ class BookingApiController extends Controller
                                 'msg' => config('messages.empty'),
                         ]);
                 } else {
+                        $atdatewisetdetails = [];
                         foreach ($joblists as $uts) {
                                 $emp_details = UserRegister::where('_id', '=', $uts->employer_auto_id)->where('Register_as', '=', 'Employer')->get();
                                 $save_jobs = SaveJobs::where('job_auto_id', '=', $uts->_id)->where('employee_auto_id', '=', $request->get('employee_auto_id'))->get();
@@ -578,6 +619,36 @@ class BookingApiController extends Controller
                                 } else {
                                         $is_save_job =  '';
                                 }
+
+                                if (!empty($experience)) {
+                                        $experience = intval(trim($experience));
+                                        $experience_from = intval($uts->experience_from_years);
+                                        $experience_to = intval($uts->experience_to_years);
+
+                                        if (
+                                                $experience_from > $experience || $experience_to <
+                                                $experience
+                                        ) {
+                                                continue;
+                                        }
+                                }
+
+                                if (!empty($date)) {
+                                        $jobDates = explode(',', $uts->walk_in_date);
+
+
+                                        $inputDate = strtotime($date);
+                                        $walkInTimestamps = array_map('strtotime', $jobDates);
+
+                                        // Find the earliest walk-in date
+                                        $earliestWalkInDate = min($walkInTimestamps);
+
+                                        // Condition: If date is in jobDates OR it's older than all walk-in dates, show the job
+                                        if (!in_array($date, $jobDates) && $inputDate > $earliestWalkInDate) {
+                                                continue; // Skip the job only if the input date is NOT in the list AND is newer
+                                        }
+                                }
+
                                 $atdatewisetdetails[] = array(
                                         "job_auto_id" => $uts->_id,
                                         "employer_auto_id" => $uts->employer_auto_id,
@@ -833,4 +904,62 @@ class BookingApiController extends Controller
                         ]);
                 }
         }
+
+        //Search History
+        public function createSearchHistory(Request $request)
+        {
+                // Check if employee_auto_id is missing
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                // Create a new search history entry
+                $searchHistory = new SearchHistory();
+                $searchHistory->employee_auto_id = $request->get('employee_auto_id');
+                $searchHistory->job_skill = $request->get('job_skill', '');
+                $searchHistory->job_role = $request->get('job_role', '');
+                $searchHistory->location = $request->get('location', '');
+                $searchHistory->walkin_interview = $request->get('walkin_interview', '');
+
+                $searchHistory->save();
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Search history added successfully",
+                ]);
+        }
+
+        public function getSearchHistory(Request $request)
+        {
+                // Check if employee_auto_id is missing
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                // Fetch search history for the given employee_auto_id
+                $history = SearchHistory::where('employee_auto_id', $request->get('employee_auto_id'))->get();
+
+                if ($history->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No search history found",
+                        ]);
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Success",
+                        'data' => $history,
+                ]);
+        }
+
+
+        //company List
+        
 }

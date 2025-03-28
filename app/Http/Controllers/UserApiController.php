@@ -355,7 +355,7 @@ class UserApiController extends Controller
 
         // Find user in UserRegister
         $user = UserRegister::where('mobile_number', $request->mobile_number)
-            ->where('Register_as', 'Employer')
+            ->where('Register_as', 'Employee')
             ->whereNull('deleted_at')
             ->first();
 
