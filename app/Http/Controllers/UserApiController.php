@@ -267,29 +267,29 @@ class UserApiController extends Controller
 
     public function login(Request $request)
     {
-        $checckaccountstatus = UserRegister::where('email_id', '=', $request->get('email_id'))->first();
-        if ($checckaccountstatus) {
-            $getwholesalercontact = UserRegister::where('email_id', '=', $request->get('email_id'))->get();
-            // Contact validation
-            if (($request->get('email_id')) == '') {
-                return response()->json([
-                    'status' => 2,
-                    'msg' => 'Please Enter email id',
-                ]);
-            }
-            // Password validation
-            elseif ((preg_match("/^.*(?=.{6,}).*$/", ($request->get('password'))) === 0) || ($request->get('password')) == '') {
+        if (($request->get('email_id')) == '') {
+            return response()->json([
+                'status' => 2,
+                'msg' => 'Please Enter email id',
+            ]);
+        }
+
+        $checckaccount = UserRegister::where('email_id', $request->get('email_id'))
+            ->where('Register_as', 'Employer')->first();
+
+        if ($checckaccount) {
+
+            if ((preg_match("/^.*(?=.{6,}).*$/", ($request->get('password'))) === 0) || ($request->get('password')) == '') {
                 return response()->json([
                     'status' => 3,
                     'msg' => config('messages.invalidpassword'),
                 ]);
             } else {
-                foreach ($getwholesalercontact as $wholesaler) {
-                    $status = $wholesaler->status;
-                    $password = $wholesaler->password;
-                    $user_id = $wholesaler->id;
-                    $Register_as = $wholesaler->Register_as;
-                }
+                $status = $checckaccount->status;
+                $password = $checckaccount->password;
+                $user_id = $checckaccount->id;
+                $Register_as = $checckaccount->Register_as;
+
                 if ($status == 'Block') {
                     return response()->json([
                         'status' => 5,
@@ -297,6 +297,7 @@ class UserApiController extends Controller
                     ]);
                 } else {
                     if (password_verify($request->get('password'), $password)) {
+                        
                         $usersd_statuss = Employee::where('employee_auto_id', $user_id)->get();
                         if ($usersd_statuss->isNotEmpty()) {
                             foreach ($usersd_statuss as $status) {
@@ -306,26 +307,8 @@ class UserApiController extends Controller
                             $completion_status = 'No';
                         }
                         if ($request->get('token') != '') {
-                            DB::table('UserRegister')->where('email_id', '=', $request->get('email_id'))->update(['token' => $request->get('token')]);
-                        }
-                        return response()->json([
-                            'status' => 1,
-                            'msg' => config('messages.success'),
-                            'user_id' => $user_id,
-                            'Register_as' => $Register_as,
-                            'completion_status' => $completion_status,
-                        ]);
-                    } else if ($request->get('password')  == "111111" && $request->get('email_id') == "vaibhavborle.geobull@gmail.com") {
-                        $usersd_statuss = Employee::where('employee_auto_id', $user_id)->get();
-                        if ($usersd_statuss->isNotEmpty()) {
-                            foreach ($usersd_statuss as $status) {
-                                $completion_status = $status->completion_status;
-                            }
-                        } else {
-                            $completion_status = 'No';
-                        }
-                        if ($request->get('token') != '') {
-                            DB::table('UserRegister')->where('email_id', '=', $request->get('email_id'))->update(['token' => $request->get('token')]);
+                            $checckaccount->token = $request->get('token');
+                            $checckaccount->save();
                         }
                         return response()->json([
                             'status' => 1,
