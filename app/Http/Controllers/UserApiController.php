@@ -2,21 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\UserRegister;
-use App\Admin;
-use App\VerifyUserContact;
-use App\VerifyUserEmail;
-use App\Employee;
-use App\AppliedJobs;
-use App\userQualificationsDetails;
-use App\userWorkDetails;
-use App\Notifications;
-use App\EmployeeNotification;
-use DateTimeZone;
 use DateTime;
+use App\Admin;
+use App\Charges;
+use App\Employee;
+use DateTimeZone;
+use App\AppliedJobs;
+use App\UserRegister;
+use App\Notifications;
+use App\userWorkDetails;
+use App\VerifyUserEmail;
+use App\Models\Promocode;
+use App\Models\Categories;
+use App\VerifyUserContact;
+use Illuminate\Http\Request;
+use App\EmployeeNotification;
+use App\Models\CustomerFeedback;
+use App\userQualificationsDetails;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 
 
 class UserApiController extends Controller
@@ -262,29 +267,29 @@ class UserApiController extends Controller
 
     public function login(Request $request)
     {
-        $checckaccountstatus = UserRegister::where('email_id', '=', $request->get('email_id'))->first();
-        if ($checckaccountstatus) {
-            $getwholesalercontact = UserRegister::where('email_id', '=', $request->get('email_id'))->get();
-            // Contact validation
-            if (($request->get('email_id')) == '') {
-                return response()->json([
-                    'status' => 2,
-                    'msg' => 'Please Enter email id',
-                ]);
-            }
-            // Password validation
-            elseif ((preg_match("/^.*(?=.{6,}).*$/", ($request->get('password'))) === 0) || ($request->get('password')) == '') {
+        if (($request->get('email_id')) == '') {
+            return response()->json([
+                'status' => 2,
+                'msg' => 'Please Enter email id',
+            ]);
+        }
+
+        $checckaccount = UserRegister::where('email_id', $request->get('email_id'))
+            ->where('Register_as', 'Employer')->first();
+
+        if ($checckaccount) {
+
+            if ((preg_match("/^.*(?=.{6,}).*$/", ($request->get('password'))) === 0) || ($request->get('password')) == '') {
                 return response()->json([
                     'status' => 3,
                     'msg' => config('messages.invalidpassword'),
                 ]);
             } else {
-                foreach ($getwholesalercontact as $wholesaler) {
-                    $status = $wholesaler->status;
-                    $password = $wholesaler->password;
-                    $user_id = $wholesaler->id;
-                    $Register_as = $wholesaler->Register_as;
-                }
+                $status = $checckaccount->status;
+                $password = $checckaccount->password;
+                $user_id = $checckaccount->id;
+                $Register_as = $checckaccount->Register_as;
+
                 if ($status == 'Block') {
                     return response()->json([
                         'status' => 5,
@@ -292,6 +297,7 @@ class UserApiController extends Controller
                     ]);
                 } else {
                     if (password_verify($request->get('password'), $password)) {
+                        
                         $usersd_statuss = Employee::where('employee_auto_id', $user_id)->get();
                         if ($usersd_statuss->isNotEmpty()) {
                             foreach ($usersd_statuss as $status) {
@@ -301,26 +307,8 @@ class UserApiController extends Controller
                             $completion_status = 'No';
                         }
                         if ($request->get('token') != '') {
-                            DB::table('UserRegister')->where('email_id', '=', $request->get('email_id'))->update(['token' => $request->get('token')]);
-                        }
-                        return response()->json([
-                            'status' => 1,
-                            'msg' => config('messages.success'),
-                            'user_id' => $user_id,
-                            'Register_as' => $Register_as,
-                            'completion_status' => $completion_status,
-                        ]);
-                    } else if ($request->get('password')  == "111111" && $request->get('email_id') == "vaibhavborle.geobull@gmail.com") {
-                        $usersd_statuss = Employee::where('employee_auto_id', $user_id)->get();
-                        if ($usersd_statuss->isNotEmpty()) {
-                            foreach ($usersd_statuss as $status) {
-                                $completion_status = $status->completion_status;
-                            }
-                        } else {
-                            $completion_status = 'No';
-                        }
-                        if ($request->get('token') != '') {
-                            DB::table('UserRegister')->where('email_id', '=', $request->get('email_id'))->update(['token' => $request->get('token')]);
+                            $checckaccount->token = $request->get('token');
+                            $checckaccount->save();
                         }
                         return response()->json([
                             'status' => 1,
@@ -406,7 +394,7 @@ class UserApiController extends Controller
 
         // Find user in UserRegister
         $user = UserRegister::where('mobile_number', $request->mobile_number)
-            ->where('Register_as', 'Employer')
+            ->where('Register_as', 'Employee')
             ->whereNull('deleted_at')
             ->first();
 
@@ -441,7 +429,8 @@ class UserApiController extends Controller
                 'msg' => 'Login Successful...!',
                 'user_id' => $user->id,
                 'mobile_number' => $user->mobile_number,
-                'token' => $user->token, // Returning updated token
+                'Register_as' => $user->Register_as,
+                'completion_status' => $user->completion_status,
             ]);
         } else {
             return response()->json([
@@ -815,15 +804,17 @@ class UserApiController extends Controller
             ]);
         }
     }
-    public function show_scheduled_session(Request $request)
-    {
-        $getSchduledList = bookSession::where('membership_booking_auto_id', '=', $request->get('membership_booking_auto_id'))->where('user_auto_id', '=', $request->get('user_auto_id'))->get();
-        if ($getSchduledList->isNotEmpty()) {
-            return response()->json(['status' => 1, "msg" => "success...!", 'getScheduledSessionList' => $getSchduledList]);
-        } else {
-            return response()->json(['status' => 0, "msg" => "Not Data Available"]);
-        }
-    }
+
+    // public function show_scheduled_session(Request $request)
+    // {
+    //     $getSchduledList = bookSession::where('membership_booking_auto_id', '=', $request->get('membership_booking_auto_id'))->where('user_auto_id', '=', $request->get('user_auto_id'))->get();
+    //     if ($getSchduledList->isNotEmpty()) {
+    //         return response()->json(['status' => 1, "msg" => "success...!", 'getScheduledSessionList' => $getSchduledList]);
+    //     } else {
+    //         return response()->json(['status' => 0, "msg" => "Not Data Available"]);
+    //     }
+    // }
+
     public function update_user_status(Request $request)
     {
 
@@ -890,19 +881,19 @@ class UserApiController extends Controller
             // if($request->get('highest_qualification')!='')
             // {
             //         $babout->highest_qualification = $request->get('highest_qualification');
-            // }   
+            // }
             // if($request->get('course')!='')
             // {
             //         $babout->course = $request->get('course');
-            // }       
+            // }
             // if($request->get('university')!='')
             // {
             //         $babout->university = $request->get('university');
-            // }  
+            // }
             // if($request->get('year_of_completion')!='')
             // {
             //         $babout->year_of_completion = $request->get('year_of_completion');
-            // } 
+            // }
             // if($request->get('marks_or_percentage')!='')
             // {
             //         $babout->marks_or_percentage = $request->get('marks_or_percentage');
@@ -956,7 +947,7 @@ class UserApiController extends Controller
 
             //         $tlist= new userQualificationsDetails();
             //         $tlist->employee_auto_id = $request->get('employee_auto_id');
-            //         $data = $emailArray[$i];  
+            //         $data = $emailArray[$i];
             //         $tlist->highest_qualification=$data;
             //         $tlist->course  = $qArray[$i];
             //         $tlist->university = $pqArray[$i];
@@ -987,14 +978,14 @@ class UserApiController extends Controller
             // if($request->get('total_year_experience')!='')
             // {
             //         $babout->total_year_experience = $request->get('total_year_experience');
-            // }  
+            // }
             if ($request->get('employment_type') != '') {
                 $babout->employment_type = $request->get('employment_type');
             }
             // if($request->get('description_of_project')!='')
             // {
             //         $babout->description_of_project = $request->get('description_of_project');
-            // }  
+            // }
             if ($request->get('advance_skills') != '') {
                 $babout->advance_skills = $request->get('advance_skills');
             }
@@ -1013,11 +1004,11 @@ class UserApiController extends Controller
             // if($request->get('company_name')!='')
             // {
             //         $babout->company_name = $request->get('company_name');
-            // } 
+            // }
             // if($request->get('designation')!='')
             // {
             //         $babout->designation = $request->get('designation');
-            // } 
+            // }
             // if($request->get('work_from')!='')
             // {
             //         $babout->work_from = $request->get('work_from');
@@ -1106,33 +1097,33 @@ class UserApiController extends Controller
             // }else
             // {
             //         $emp->highest_qualification ="";
-            // }   
+            // }
             // if($request->get('course')!='')
             // {
             //         $emp->course = $request->get('course');
             // }else{
             //         $emp->course ="";
-            // }       
+            // }
             // if($request->get('university')!='')
             // {
             //         $emp->university = $request->get('university');
             // }else
             // {
             //         $emp->university ="";
-            // }   
+            // }
             // if($request->get('year_of_completion')!='')
             // {
             //         $emp->year_of_completion = $request->get('year_of_completion');
             // }else{
             //         $emp->year_of_completion ="";
-            // } 
+            // }
             // if($request->get('marks_or_percentage')!='')
             // {
             //         $emp->marks_or_percentage = $request->get('marks_or_percentage');
             // }else
             // {
             //         $emp->marks_or_percentage ="";
-            // }   
+            // }
 
             if ($request->get('fresher_or_experienced') != '') {
                 $emp->fresher_or_experienced = $request->get('fresher_or_experienced');
@@ -1170,7 +1161,7 @@ class UserApiController extends Controller
             // }else
             // {
             //         $emp->total_year_experience ="";
-            // }   
+            // }
             if ($request->get('employment_type') != '') {
                 $emp->employment_type = $request->get('employment_type');
             } else {
@@ -1182,7 +1173,7 @@ class UserApiController extends Controller
             // }else
             // {
             //         $emp->description_of_project ="";
-            // }   
+            // }
             if ($request->get('advance_skills') != '') {
                 $emp->advance_skills = $request->get('advance_skills');
             } else {
@@ -1213,19 +1204,19 @@ class UserApiController extends Controller
             //         $emp->company_name = $request->get('company_name');
             // }else{
             //         $emp->company_name ="";
-            // }   
+            // }
             // if($request->get('designation')!='')
             // {
             //         $emp->designation = $request->get('designation');
             // } else{
             //         $emp->designation ="";
-            // }  
+            // }
             // if($request->get('work_from')!='')
             // {
             //         $emp->work_from = $request->get('work_from');
             // } else{
             //         $emp->work_from ="";
-            // }  
+            // }
             $emp->save();
 
             return response()->json([
