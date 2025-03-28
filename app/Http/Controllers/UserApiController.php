@@ -149,6 +149,16 @@ class UserApiController extends Controller
             } else {
                 $UserRegister->company_photo = '';
             }
+
+            if ($request->hasFile('certificate_gst_pancard')) {
+                $file = $request->file('certificate_gst_pancard');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = public_path('images/documents');
+                $file->move($path, $filename);
+                $UserRegister->certificate_gst_pancard = $filename;
+            } else {
+                $UserRegister->certificate_gst_pancard = '';
+            }
             $UserRegister->company_description = $request->get('company_description', '');
             $UserRegister->company_employee_range = $request->get('company_employee_range', '');
             $UserRegister->company_type = $request->get('company_type', '');
@@ -418,7 +428,7 @@ class UserApiController extends Controller
 
 
         // Verify OTP
-        if ($user->login_otp == $request->otp ) {
+        if ($user->login_otp == $request->otp) {
 
             // Update token after successful OTP verification
             $user->token = $request->token;
@@ -624,32 +634,92 @@ class UserApiController extends Controller
     public function update_user_profile(Request $request)
     {
         $customer = UserRegister::find($request->get('user_auto_id'));
+
         if (empty($customer)) {
             return response()->json(['status' => '0', "msg" => "No User Found"]);
-        } else {
-            $customer->name = $request->get('name');
-            $customer->email_id = $request->get('email_id');
-            $customer->mobile_number = $request->get('mobile_number');
-            if ($request->get('token') != '') {
-                $customer->token = $request->get('token');
-            }
-
-            if (!empty($request->file('profile_photo'))) {
-                $file = $request->file('profile_photo');
-                $filename = $file->getClientOriginalName();
-                $path = public_path('images/profile');
-                $file->move($path, $filename);
-                $customer->profile_photo = $filename;
-            }
-            if ($request->get('company_register_date') != '') {
-                $customer->company_register_date = $request->get('company_register_date');
-            } else {
-                $customer->company_register_date = '';
-            }
-            $customer->save();
-
-            return response()->json(['status' => '1', "msg" => config('messages.success'), 'data' => $customer]);
         }
+
+        // Only update fields if they are present in the request
+        if ($request->has('name')) {
+            $customer->name = $request->get('name');
+        }
+        if ($request->has('email_id')) {
+            $customer->email_id = $request->get('email_id');
+        }
+        if ($request->has('mobile_number')) {
+            $customer->mobile_number = $request->get('mobile_number');
+        }
+        if ($request->has('token')) {
+            $customer->token = $request->get('token');
+        }
+        if ($request->has('company_register_date')) {
+            $customer->company_register_date = $request->get('company_register_date');
+        }
+        if ($request->has('company_name')) {
+            $customer->company_name = $request->get('company_name');
+        }
+        if ($request->has('company_description')) {
+            $customer->company_description = $request->get('company_description');
+        }
+        if ($request->has('company_employee_range')) {
+            $customer->company_employee_range = $request->get('company_employee_range');
+        }
+        if ($request->has('company_type')) {
+            $customer->company_type = $request->get('company_type');
+        }
+        if ($request->has('company_headquarter')) {
+            $customer->company_headquarter = $request->get('company_headquarter');
+        }
+        if ($request->has('company_website')) {
+            $customer->company_website = $request->get('company_website');
+        }
+        if ($request->has('company_address')) {
+            $customer->company_address = $request->get('company_address');
+        }
+        if ($request->has('language')) {
+            $customer->language = $request->get('language');
+        }
+
+        // Handle file uploads only if present
+        if ($request->hasFile('profile_photo')) {
+            $file = $request->file('profile_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('images/profile');
+            $file->move($path, $filename);
+            $customer->profile_photo = $filename;
+        }
+
+        if ($request->hasFile('company_logo')) {
+            $file = $request->file('company_logo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('images/company_logo');
+            $file->move($path, $filename);
+            $customer->company_logo = $filename;
+        }
+
+        if ($request->hasFile('company_photo')) {
+            $file = $request->file('company_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('images/company_photo');
+            $file->move($path, $filename);
+            $customer->company_photo = $filename;
+        }
+
+        if ($request->hasFile('certificate_gst_pancard')) {
+            $file = $request->file('certificate_gst_pancard');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('images/documents');
+            $file->move($path, $filename);
+            $customer->certificate_gst_pancard = $filename;
+        }
+
+        $customer->save();
+
+        return response()->json([
+            'status' => '1',
+            "msg" => config('messages.success'),
+            'data' => $customer
+        ]);
     }
 
 
