@@ -960,6 +960,6 @@ class BookingApiController extends Controller
         }
 
 
-        //company List
-        
+       
+
 }

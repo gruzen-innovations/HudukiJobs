@@ -89,3 +89,7 @@ Route::post('delete_employee_qualification_details', [WorkQualificationsApiContr
 //Search History
 Route::post('add_search_history', [BookingApiController::class, 'createSearchHistory']);
 Route::post('get_search_history', [BookingApiController::class, 'getSearchHistory']);
+
+//emergency information
+Route::post('get_emergency_information', [UserApiController::class, 'getEmergencyInformation']);
+

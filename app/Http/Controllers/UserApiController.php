@@ -22,6 +22,7 @@ use App\userQualificationsDetails;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Session;
+use App\EmergencyInformation;
 
 
 class UserApiController extends Controller
@@ -835,6 +836,8 @@ class UserApiController extends Controller
             return response()->json(['status' => 1, "msg" => config('messages.success')]);
         }
     }
+
+
     public function update_employee_profile(Request $request)
     {
 
@@ -1022,6 +1025,25 @@ class UserApiController extends Controller
             //         $babout->work_from = $request->get('work_from');
             // }
 
+            if ($request->get('open_to_work') != '') {
+                $babout->open_to_work = $request->get('open_to_work');
+            }
+            if ($request->get('mark_as_hired') != '') {
+                $babout->mark_as_hired = $request->get('mark_as_hired');
+            }
+            if ($request->get('language') != '') {
+                $babout->language = $request->get('language');
+            }
+            if ($request->get('rating') != '') {
+                $babout->rating = $request->get('rating');
+            }
+            if (!empty($request->file('adhaar_card_img'))) {
+                $file = $request->file('adhaar_card_img');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $babout->adhaar_card_img = $filename;
+            }
             $babout->save();
 
             return response()->json([
@@ -1225,6 +1247,41 @@ class UserApiController extends Controller
             // } else{
             //         $emp->work_from ="";
             // }
+
+            if ($request->get('open_to_work') != '') {
+                $emp->open_to_work = $request->get('open_to_work');
+            } else {
+                $emp->open_to_work = '';
+            }
+
+            if ($request->get('mark_as_hired') != '') {
+                $emp->mark_as_hired = $request->get('mark_as_hired');
+            } else {
+                $emp->mark_as_hired = '';
+            }
+
+            if ($request->get('language') != '') {
+                $emp->language = $request->get('language');
+            } else {
+                $emp->language = '';
+            }
+
+            if ($request->get('rating') != '') {
+                $emp->rating = $request->get('rating');
+            } else {
+                $emp->rating = '';
+            }
+
+            if (!empty($request->file('adhaar_card_img'))) {
+                $file = $request->file('adhaar_card_img');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $emp->adhaar_card_img = $filename;
+            } else {
+                $emp->adhaar_card_img = null;
+            }
+
             $emp->save();
 
             return response()->json([
@@ -1313,5 +1370,21 @@ class UserApiController extends Controller
                 'busniess_details' => $details,
             ]);
         }
+    }
+
+    public function getEmergencyInformation()
+    {
+        $emergencyContacts = [
+            'police' => '100',
+            'fire_brigade' => '101',
+            'ambulance' => '102',
+            'women_safety' => '1091',
+        ];
+
+        return response()->json([
+            'status' => 1,
+            'message' => 'Emergency contact details fetched successfully',
+            'data' => $emergencyContacts
+        ], 200);
     }
 }
