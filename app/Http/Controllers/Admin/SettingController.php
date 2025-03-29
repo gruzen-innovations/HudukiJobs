@@ -148,14 +148,24 @@ class SettingController extends Controller
             $request,
             [
                 'video' => 'required|mimes:mp4,mov,avi,wmv|max:102400',
+                'thumbnail' => 'required',
             ],
             [
                 'video.required' => 'Please select a video file.',
+                'thumbnail.required' => 'Please select a file.',
                 'video.mimes' => 'Only MP4, MOV, AVI, or WMV files are allowed.',
                 'video.max' => 'Video size must not exceed 100MB.',
             ]
         );
 
+        if ($request->hasFile('thumbnail')) {
+            $file = $request->file('thumbnail');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = public_path('images/training');
+            $file->move($path, $filename);
+            $video->thumbnail = $filename;
+
+        }
 
         if ($request->hasFile('video')) {
             $file = $request->file('video');
@@ -164,14 +174,13 @@ class SettingController extends Controller
             $file->move($path, $filename);
             $video->video = $filename;
 
-
-            $video->save();
         }
 
+        $video->save();
         return redirect('training_videos')->with('success', 'Updated Successfully');
     }
 
-    
+
     public function delete_video($id)
     {
         $video = TrainingVideos::find($id);

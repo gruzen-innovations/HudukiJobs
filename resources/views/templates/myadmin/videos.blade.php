@@ -32,7 +32,7 @@
                             <div class="col-md-12 col-lg-12">
 
                                 <div class="card">
-                                    
+
                                     <div class="card-body">
                                         @include('templates.myadmin.messages')
 
@@ -55,11 +55,16 @@
 
                                                             <!-- Video Thumbnail -->
                                                             <td>
-                                                                <img src="https://img.icons8.com/ios-filled/50/000000/video-thumbnail.png"
-                                                                    alt="Thumbnail" width="80" height="80"
-                                                                    style="cursor: pointer;" data-toggle="modal"
-                                                                    data-target="#videoModal"
-                                                                    onclick="showVideo('{{ asset('videos/training/' . $video->video) }}')">
+                                                                @if($video->thumbnail && file_exists(public_path('images/training/' . $video->thumbnail)))
+                                                                    <img src="{{ asset('images/training/' . $video->thumbnail) }}"
+                                                                        alt="Thumbnail" width="80" height="80"
+                                                                        style="cursor: pointer;" data-toggle="modal"
+                                                                        data-target="#videoModal"
+                                                                        onclick="showVideo('{{ asset('videos/training/' . $video->video) }}')">
+                                                                @else
+                                                                    <img src="https://img.icons8.com/ios-filled/50/000000/video-thumbnail.png"
+                                                                        alt="Default Thumbnail" width="80" height="80">
+                                                                @endif
                                                             </td>
 
                                                             <!-- Video Name -->

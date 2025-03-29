@@ -42,6 +42,11 @@
                                 <input type="file" name="video" id="video" class="form-control" accept="video/*" required>
                             </div>
 
+                            <div class="form-group">
+                                <label for="video">Select Thumbnail Image File</label>
+                                <input type="file" name="thumbnail" id="thumbnail" class="form-control" accept="image/*" required>
+                            </div>
+
                             <button type="submit" class="btn btn-primary">Upload Video</button>
                         </form>
                     </div>
