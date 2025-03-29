@@ -34,7 +34,7 @@
                         @endif
 
                         <!-- Video Upload Form -->
-                        <form action="{{ url('add-video') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ url('store-video') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group">
