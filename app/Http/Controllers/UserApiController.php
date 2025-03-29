@@ -140,7 +140,7 @@ class UserApiController extends Controller
             if (!empty($request->file('company_logo'))) {
                 $file = $request->file('company_logo');
                 $filename = $file->getClientOriginalName();
-                $path = public_path('images/company logo');
+                $path = public_path('images/company_logo');
                 $file->move($path, $filename);
                 $UserRegister->company_logo = $filename;
             } else {
@@ -149,7 +149,7 @@ class UserApiController extends Controller
             if (!empty($request->file('company_photo'))) {
                 $file = $request->file('company_photo');
                 $filename = $file->getClientOriginalName();
-                $path = public_path('images/company photo');
+                $path = public_path('images/company_photo');
                 $file->move($path, $filename);
                 $UserRegister->company_photo = $filename;
             } else {
