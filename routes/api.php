@@ -108,6 +108,9 @@ Route::post('delete_candidate_remainder', [BookingApiController::class, 'deleteC
 //Employee Report
 Route::post('report_employee', [BookingApiController::class, 'createReportEmployee']);
 
+//training Videos
+Route::post('get_training_video', [BookingApiController::class, 'getTrainingVideos']);
+
 
 
 

@@ -24,6 +24,7 @@ use DB;
 use Illuminate\Support\Facades\Validator;
 use App\SearchHistory;
 use App\FollowCompany;
+use App\TrainingVideos;
 use MongoDB\BSON\ObjectId;
 
 
@@ -1336,6 +1337,23 @@ class BookingApiController extends Controller
                         'status' => 1,
                         'msg' => 'Success',
                         'data' => $jobDetails,
+                ]);
+        }
+        public function getTrainingVideos(Request $request)
+        {
+                $trainingVideos = TrainingVideos::all();
+
+                if ($trainingVideos->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No training videos found.",
+                        ]);
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Success",
+                        'data' => $trainingVideos,
                 ]);
         }
 }
