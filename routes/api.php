@@ -95,5 +95,18 @@ Route::post('get_emergency_information', [UserApiController::class, 'getEmergenc
 
 //Company
 Route::post('get_company_list', [BookingApiController::class, 'getCompanyList']);
+Route::post('follow_unfollow_company', [BookingApiController::class, 'followUnfollowCompany']);
+
+
+//Remainder
+Route::post('add_candidate_remainder', [BookingApiController::class, 'createCandidateRemainder']);
+Route::post('get_candidate_remainder', [BookingApiController::class, 'getCandidateRemainder']);
+Route::post('delete_candidate_remainder', [BookingApiController::class, 'deleteCandidateRemainder']);
+
+//Employee Report
+Route::post('report_employee', [BookingApiController::class, 'createReportEmployee']);
+
+
+
 
 

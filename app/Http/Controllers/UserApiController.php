@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use App\EmergencyInformation;
 
 
+
 class UserApiController extends Controller
 {
     public function send_registration_email_otp(Request $request)
@@ -1387,4 +1388,8 @@ class UserApiController extends Controller
             'data' => $emergencyContacts
         ], 200);
     }
+
+  
+
+   
 }

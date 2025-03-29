@@ -8,6 +8,8 @@ use App\ClassifiedAdd;
 use App\Jobs;
 use App\UserRegister;
 use App\Employee;
+use App\CandidateRemainder;
+use App\ReportEmployee;
 use DateTimeZone;
 use App\Professions;
 use App\SaveJobs;
@@ -21,6 +23,8 @@ use DateTime;
 use DB;
 use Illuminate\Support\Facades\Validator;
 use App\SearchHistory;
+use App\FollowCompany;
+use MongoDB\BSON\ObjectId;
 
 
 
@@ -1011,5 +1015,203 @@ class BookingApiController extends Controller
                         'msg' => "Success",
                         'data' => $company_list,
                 ]);
+        }
+
+        public function createCandidateRemainder(Request $request)
+        {
+                // Check if employee_auto_id is missing
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                $CandidateRemainder = new CandidateRemainder();
+                $CandidateRemainder->employee_auto_id = $request->get('employee_auto_id');
+                $CandidateRemainder->employer_auto_id = $request->get('employer_auto_id');
+                $CandidateRemainder->call_date = $request->get('call_date', '');
+                $CandidateRemainder->call_time = $request->get('call_time', '');
+
+                $CandidateRemainder->save();
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Candidate Remainder added successfully",
+                ]);
+        }
+
+        public function getCandidateRemainder(Request $request)
+        {
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+
+                $remainder = CandidateRemainder::where('employer_auto_id', $request->get('employer_auto_id'))->get();
+
+                if ($remainder->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No search history found",
+                        ]);
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Success",
+                        'data' => $remainder,
+                ]);
+        }
+
+
+        public function deleteCandidateRemainder(Request $request)
+        {
+                // Validate required parameters
+                if (!$request->has('remainder_auto_id') || empty($request->get('remainder_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Remainder ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+                try {
+
+                        $remainderId = new ObjectId($request->get('remainder_auto_id'));
+
+
+                        $remainder = CandidateRemainder::where('_id', $remainderId)
+                                ->where('employer_auto_id', $request->get('employer_auto_id'))
+                                ->first();
+
+
+                        if (!$remainder) {
+                                return response()->json([
+                                        'status' => 0,
+                                        'msg' => "No remainder found.",
+                                ]);
+                        }
+
+
+                        $remainder->delete();
+
+                        return response()->json([
+                                'status' => 1,
+                                'msg' => "Remainder deleted successfully.",
+                        ]);
+                } catch (\Exception $e) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Invalid remainder ID format.",
+                        ], 400);
+                }
+        }
+
+        public function createReportEmployee(Request $request)
+        {
+                // Check if employee_auto_id is missing
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                $ReportEmployee = new ReportEmployee();
+                $ReportEmployee->employee_auto_id = $request->get('employee_auto_id');
+                $ReportEmployee->employer_auto_id = $request->get('employer_auto_id');
+                $ReportEmployee->reason = $request->get('reason', '');
+
+                $ReportEmployee->save();
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Employee Reported successfully",
+                ]);
+        }
+
+        public function followUnfollowCompany(Request $request)
+        {
+             
+                if (!$request->has('follow_id') || empty($request->get('follow_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Follow ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('follow')) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Follow status is required.",
+                        ], 400);
+                }
+
+                try {
+                        $followStatus = filter_var($request->get('follow'), FILTER_VALIDATE_BOOLEAN);
+
+                        // Fetch existing record
+                        $existingRecord = FollowCompany::where('follow_id', $request->get('follow_id'))
+                                ->where('employee_auto_id', $request->get('employee_auto_id'))
+                                ->first();
+
+                        if ($existingRecord) {
+                                // Update follow status
+                                $existingRecord->follow = $followStatus;
+                                $existingRecord->save();
+
+                                return response()->json([
+                                        'status' => 1,
+                                        'msg' => "Follow status updated successfully.",
+                                ]);
+                        } else {
+                                // Create new record
+                                $FollowCompany = new FollowCompany();
+                                $FollowCompany->follow_id = $request->get('follow_id');
+                                $FollowCompany->employee_auto_id = $request->get('employee_auto_id');
+                                $FollowCompany->follow = $followStatus;
+                                $FollowCompany->save();
+                                return response()->json([
+                                        'status' => 1,
+                                        'msg' => "Follow status added successfully.",
+                                ]);
+                        }
+                } catch (\Exception $e) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Invalid Follow ID or Employee ID format.",
+                        ], 400);
+                }
         }
 }

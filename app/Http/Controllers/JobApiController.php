@@ -255,6 +255,10 @@ class JobApiController extends Controller
                     $jobs->employee_auto_id = $request->get('employee_auto_id');
                     $jobs->employer_auto_id = $request->get('employer_auto_id');
                     $jobs->rdate = date('Y-m-d');
+                    $jobs->walk_in_date = $request->get('walk_in_date');
+                    $jobs->walk_in_time = $request->get('walk_in_time');
+                    $jobs->walkin_location = $request->get('walkin_location');
+
                     $jobs->save();
 
                      return response()->json([
