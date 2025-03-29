@@ -93,3 +93,7 @@ Route::post('get_search_history', [BookingApiController::class, 'getSearchHistor
 //emergency information
 Route::post('get_emergency_information', [UserApiController::class, 'getEmergencyInformation']);
 
+//Company
+Route::post('get_company_list', [BookingApiController::class, 'getCompanyList']);
+
+

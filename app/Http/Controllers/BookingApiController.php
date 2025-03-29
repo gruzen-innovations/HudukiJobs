@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use App\SearchHistory;
 
 
+
 class BookingApiController extends Controller
 {
         //profession
@@ -697,6 +698,9 @@ class BookingApiController extends Controller
                 $job_type = $request->input('job_type');
                 $gender = $request->input('gender');
                 $ctc = $request->input('ctc');
+                $open_to_work = $request->input('open_to_work');
+                $skills = $request->input('skills');
+                $rating = $request->input('rating');
                 // $searchlists = explode(',', $search);
                 $conditions = array();
 
@@ -706,6 +710,7 @@ class BookingApiController extends Controller
                 $job_type_ids = [];
                 $gender_ids = [];
                 $ctc_ids = [];
+                $skills_ids = [];
                 if ($request->get('location') != "") {
                         $location_ids = explode(',', $request->get('location'));
                         array_push($conditions, array('field' => 'city', 'value' => $location_ids, 'condition' => 'orwhereIn'));
@@ -730,6 +735,27 @@ class BookingApiController extends Controller
                         $ctc_ids = explode(',', $request->get('ctc'));
                         array_push($conditions, array('field' => 'expected_ctc', 'value' => $ctc_ids, 'condition' => 'orwhereIn'));
                 }
+                if ($request->get('open_to_work') != "") {
+                        array_push($conditions, array(
+                                'field' => 'open_to_work',
+                                'value' => [$request->get('open_to_work')],
+                                'condition' =>
+                                'orwhereIn'
+                        ));
+                }
+                if ($request->get('skills') != "") {
+                        $skills_ids = explode(',', $request->get('skills'));
+                        foreach ($skills_ids as $skill) {
+                                $conditions[] = [
+                                        'field' => 'skills',
+                                        'value' => new \MongoDB\BSON\Regex(trim($skill), 'i'), // Case-insensitive search
+                                        'condition' => 'orWhere'
+                                ];
+                        }
+                }
+
+
+
 
                 $emplists = Employee::where(function ($q) use ($conditions) {
                         foreach ($conditions as $key) {
@@ -741,6 +767,8 @@ class BookingApiController extends Controller
                                         $q->where($key['field'], ">=", strval($key['value']));
                                 } elseif ($key['condition'] == ">orwhere") {
                                         $q->where($key['field'], ">=", strval($key['value']));
+                                } elseif ($key['condition'] == "orWhere") {
+                                        $q->orWhere($key['field'], 'regexp', $key['value']);
                                 } else {
                                         $q->where($key['field'], "=", $key['value']);
                                 }
@@ -754,6 +782,11 @@ class BookingApiController extends Controller
                                 'msg' => config('messages.empty'),
                         ]);
                 } else {
+
+
+                        if ($rating === "yes") {
+                                $emplists = $emplists->sortByDesc('rating'); // Use sortByDesc for collections
+                        }
 
                         foreach ($emplists as $at) {
                                 $pcat = UserRegister::where('_id', '=', $at->employee_auto_id)->where('Register_as', '=', 'Employee')->get();
@@ -822,7 +855,8 @@ class BookingApiController extends Controller
                                         "current_ctc" => $at->current_ctc,
                                         "expected_ctc" => $at->expected_ctc,
                                         "Qualifications_data" => $quadetails,
-                                        "work_details_data" => $wfdetails
+                                        "work_details_data" => $wfdetails,
+                                        "rating" => $at->rating
                                 );
 
                                 $details[] = array(
@@ -960,6 +994,22 @@ class BookingApiController extends Controller
         }
 
 
-       
+        public function getCompanyList(Request $request)
+        {
+                // Fetch companies where Register_as is 'Employer'
+                $company_list = UserRegister::where('Register_as', 'Employer')->get();
 
+                if ($company_list->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No Company List found",
+                        ]);
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Success",
+                        'data' => $company_list,
+                ]);
+        }
 }
