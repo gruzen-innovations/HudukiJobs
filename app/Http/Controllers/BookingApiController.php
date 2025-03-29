@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Validator;
 use App\SearchHistory;
 use App\FollowCompany;
 use App\TrainingVideos;
+use App\RateEmployee;
 use MongoDB\BSON\ObjectId;
 
 
@@ -984,6 +985,7 @@ class BookingApiController extends Controller
                 // Fetch search history for the given employee_auto_id
                 $history = SearchHistory::where('employee_auto_id', $request->get('employee_auto_id'))->get();
 
+
                 if ($history->isEmpty()) {
                         return response()->json([
                                 'status' => 0,
@@ -1354,6 +1356,37 @@ class BookingApiController extends Controller
                         'status' => 1,
                         'msg' => "Success",
                         'data' => $trainingVideos,
+                ]);
+        }
+
+        public function createRatingEmployee(Request $request)
+        {
+                // Check if employee_auto_id is missing
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+
+                $RateEmployee = new RateEmployee();
+                $RateEmployee->employee_auto_id = $request->get('employee_auto_id');
+                $RateEmployee->employer_auto_id = $request->get('employer_auto_id');
+                $RateEmployee->rate = (float) $request->get('rate');
+
+                $RateEmployee->save();
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Employee rating added successfully",
                 ]);
         }
 }

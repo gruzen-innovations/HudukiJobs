@@ -111,6 +111,8 @@ Route::post('report_employee', [BookingApiController::class, 'createReportEmploy
 //training Videos
 Route::post('get_training_video', [BookingApiController::class, 'getTrainingVideos']);
 
+//rate employee
+Route::post('rate_employee', [BookingApiController::class, 'createRatingEmployee']);
 
 
 
