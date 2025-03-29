@@ -160,24 +160,22 @@ class SettingController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             $file = $request->file('thumbnail');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = public_path('images/training');
             $file->move($path, $filename);
             $video->thumbnail = $filename;
-
         }
 
         if ($request->hasFile('video')) {
             $file = $request->file('video');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = $file->getClientOriginalName();
             $path = public_path('videos/training');
             $file->move($path, $filename);
             $video->video = $filename;
-
         }
 
         $video->save();
-        return redirect('videos')->with('success', 'Updated Successfully');
+        return redirect('/training-videos')->with('success', 'Updated Successfully');
     }
 
 
@@ -195,7 +193,6 @@ class SettingController extends Controller
                     unlink($path);
                 }
             } catch (Exception $e) {
-
             }
 
             $video->delete();

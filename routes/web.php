@@ -193,7 +193,7 @@ Route::get('edit-advance-skills/{id}', [HMBIController::class, 'edit_advance_ski
 Route::post('update-advance-skills', [HMBIController::class, 'update_advance_skills']);
 Route::get('delete-advance-skills/{id}', [HMBIController::class, 'delete_advance_skills']);
 
-Route::get('/videos', [SettingController::class, 'training_videos']);
+Route::get('/training-videos', [SettingController::class, 'training_videos']);
 Route::get('/add-video', [SettingController::class, 'add_video']);
 Route::post('/store-video', [SettingController::class, 'store_video']);
 Route::post('delete-video/{id}', [SettingController::class, 'delete_video']);

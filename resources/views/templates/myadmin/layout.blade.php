@@ -121,7 +121,7 @@
 
                     <li>
 
-                        <a href="{{ url('videos') }}"> <i class="menu-icon fa fa-video-camera"></i>
+                        <a href="{{ url('training-videos') }}"> <i class="menu-icon fa fa-video-camera"></i>
                             Training Videos</a>
 
                     </li>
