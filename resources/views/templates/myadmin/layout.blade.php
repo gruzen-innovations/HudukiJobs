@@ -10,7 +10,8 @@
 
 <html class="no-js" lang=""> <!--<![endif]-->
 
-<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -28,7 +29,7 @@
 
     <meta http-equiv="Cache-Control" content="no-cache">
 
-    <link rel="icon" href="{{asset('templates-assets/myadminweb/images/logo.png')}}" type="image/jpg">
+    <link rel="icon" href="{{ asset('templates-assets/myadminweb/images/logo.png') }}" type="image/jpg">
 
 
 
@@ -38,23 +39,23 @@
 
 
 
-    <link rel="stylesheet" href="{{asset('templates-assets/myadminweb/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('templates-assets/myadminweb/css/bootstrap.min.css') }}">
 
-    <link rel="stylesheet" href="{{asset('templates-assets/myadminweb/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('templates-assets/myadminweb/css/font-awesome.min.css') }}">
 
-    <link rel="stylesheet" href="{{asset('templates-assets/myadminweb/css/main.css')}}">
+    <link rel="stylesheet" href="{{ asset('templates-assets/myadminweb/css/main.css') }}">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet'>
 
     <!-- Data tables  -->
 
-    <link rel="stylesheet" href="{{asset('templates-assets/myadminweb/css/dataTables.bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('templates-assets/myadminweb/css/dataTables.bootstrap.min.css') }}">
 
-    <script src="{{asset('templates-assets/myadminweb/js/jquery-2.1.4.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/jquery-2.1.4.min.js') }}"></script>
 
-      <script src="{{asset('templates-assets/myadminweb/js/jquery_ajax_1.1.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/jquery_ajax_1.1.js') }}"></script>
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/bootstrap.min.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/bootstrap.min.js') }}"></script> -->
 
 </head>
 
@@ -64,11 +65,14 @@
 
     <aside id="left-panel" class="left-panel ">
 
-        <nav class="navbar navbar-expand-sm navbar-default" style="background-color: steelblue !important;border: steelblue !important;">
+        <nav class="navbar navbar-expand-sm navbar-default"
+            style="background-color: steelblue !important;border: steelblue !important;">
 
             <div class="navbar-header">
 
-                <button class="navbar-toggler navbtn_responsiv" type="button" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler navbtn_responsiv" type="button" data-toggle="collapse"
+                    data-target="#main-menu" aria-controls="main-menu" aria-expanded="false"
+                    aria-label="Toggle navigation">
 
                     <i class="fa fa-bars"></i>
 
@@ -77,13 +81,13 @@
                 <a class="navbar-brand" href="#">Huduki Jobs
 
 
-                    <!--<img src="{{asset('templates-assets/myadminweb/images/homelogo.png')}}" alt="Logo">-->
+                    <!--<img src="{{ asset('templates-assets/myadminweb/images/homelogo.png') }}" alt="Logo">-->
 
                 </a>
 
                 <a class="navbar-brand hidden" href="./">
 
-                    <!--<img src="{{asset('templates-assets/myadminweb/images/homelogo.png')}}" alt="Logo">-->
+                    <!--<img src="{{ asset('templates-assets/myadminweb/images/homelogo.png') }}" alt="Logo">-->
 
                 </a>
 
@@ -97,185 +101,113 @@
 
                     <li class="active">
 
-                        <a href="{{url('home')}}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                        <a href="{{ url('home') }}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
 
                     </li>
 
 
 
-                    <!--<li>-->
-
-                    <!--    <a href="{{url('plan-history')}}"> <i class="menu-icon fa fa-user"></i>Grobiz Plan Hisotry</a>-->
-
-                    <!--</li>-->
-
-
 
                     <li>
 
-                        <a href="{{url('wholesalers')}}"> <i class="menu-icon fa fa-user"></i>Employer Lists </a>
+                        <a href="{{ url('wholesalers') }}"> <i class="menu-icon fa fa-user"></i>Employer Lists </a>
 
                     </li>
                     <li>
 
-                        <a href="{{url('employee')}}"> <i class="menu-icon fa fa-user"></i>Employee Lists </a>
+                        <a href="{{ url('employee') }}"> <i class="menu-icon fa fa-user"></i>Employee Lists </a>
 
                     </li>
 
-
-
-                        <!--<li class="menu-item-has-children dropdown">-->
-
-                        <!--    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="menu-icon fa fa-shopping-cart"></i>Order History</a>-->
-
-                        <!--    <ul class="sub-menu children dropdown-menu" role="menu">-->
-
-                        <!--        <li><i class="menu-icon fa fa-product-hunt"></i><a href="{{url('received-order-history')}}">Received Order</a></li>-->
-
-                        <!--         <li><i class="menu-icon fa fa-product-hunt"></i><a href="{{url('preparing-order-history')}}">Preparing Order</a></li>-->
-
-                        <!--        <li><i class="menu-icon fa fa-product-hunt"></i><a href="{{url('dispatched-order-history')}}">Dispatched Order</a></li>-->
-
-                        <!--        <li><i class="menu-icon fa fa-product-hunt"></i><a href="{{url('delivered-order-history')}}">Delivered Order</a></li>-->
-
-                        <!--    </ul>-->
-
-                        <!--</li>-->
-
-
-                   <!-- <li>-->
-                   <!--    <a href="{{url('slider')}}"> <i class="menu-icon fa fa-sliders"></i>Sliders</a>-->
-                   <!--</li>-->
-
-                  <!--  <li>-->
-
-                  <!--      <a href="{{url('maincategory')}}"><i class="menu-icon fa fa-list-alt"></i>Main Category</a>-->
-
-                  <!--  </li>-->
-
-                  <!--<li>-->
-
-                  <!--      <a href="{{url('subcategory')}}"><i class="menu-icon fa fa-list-alt"></i>Sub Category</a>-->
-
-                  <!--  </li>-->
-
-                  <!--     <li>-->
-
-                  <!--      <a href="{{url('childCategory')}}"><i class="menu-icon fa fa-list-alt"></i>Sub Sub Category</a>-->
-
-                  <!--  </li>-->
-
-
-                            <!--<li>-->
-
-                            <!--<a href="{{url('promocode')}}"> <i class="menu-icon fa fa-map-pin"></i>Promo Codes</a>-->
-
-                            <!--</li>-->
-
-
-                            <!--<li>-->
-                            <!--    <a href="{{url('offers')}}"> <i class="menu-icon fa fa-map-pin"></i>Offers</a>-->
-                            <!--</li>-->
-
-
-
-                            <li>
-
-                                <a href="{{url('notifications')}}"> <i class="menu-icon fa fa-map-pin"></i>Notifications</a>
-
-                            </li>
-
-
-                    <!--  <li>-->
-                    <!--    <a href="{{url('notification-setting')}}"> <i class="menu-icon fa fa-cog"></i>Notification Settings</a>-->
-                    <!--</li> -->
-
-
-
-
-                            <!--<li>-->
-
-                            <!--    <a href="{{url('enquiry')}}"> <i class="menu-icon fa fa-map-pin"></i>Enquiry</a>-->
-
-                            <!--</li>-->
-
-
-
-
-
-                    <!--<li>-->
-
-                    <!--    <a href="{{url('charges')}}"> <i class="menu-icon fa fa-money"></i>Charges </a>-->
-
-                    <!--</li>-->
                     <li>
-                        <a href="{{url('ecomm-plans')}}"><i class="menu-icon fa fa-list-alt"></i>Subscription Plans</a>
+
+                        <a href="{{ url('videos') }}"> <i class="menu-icon fa fa-video-camera"></i>
+                            Training Videos</a>
+
+                    </li>
+
+                    <li>
+
+                        <a href="{{ url('notifications') }}"> <i class="menu-icon fa fa-map-pin"></i>Notifications</a>
+
+                    </li>
+
+                    <li>
+                        <a href="{{ url('ecomm-plans') }}"><i class="menu-icon fa fa-list-alt"></i>Subscription
+                            Plans</a>
                     </li>
                     <li>
-                       <a href="{{url('purchased-history')}}"><i class="menu-icon fa fa-history"></i>Plan Purchased  History</a>
+                        <a href="{{ url('purchased-history') }}"><i class="menu-icon fa fa-history"></i>Plan Purchased
+                            History</a>
                     </li>
 
 
                     <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="menu-icon fa fa-plus-square-o"></i>Dynamic Lists</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false"><i class="menu-icon fa fa-plus-square-o"></i>Dynamic Lists</a>
                         <ul class="sub-menu children dropdown-menu" role="menu">
 
                             <li>
-                                <i class="menu-icon fa fa-plus"></i><a href="{{url('profession')}}">Job Role List</a>
+                                <i class="menu-icon fa fa-plus"></i><a href="{{ url('profession') }}">Job Role List</a>
                             </li>
 
                             <li>
-                                <i class="menu-icon fa fa-plus"></i><a href="{{url('working')}}">Job Skills List</a>
+                                <i class="menu-icon fa fa-plus"></i><a href="{{ url('working') }}">Job Skills List</a>
                             </li>
 
-                              <li>
-                                <i class="menu-icon fa fa-plus"></i><a href="{{url('qualification')}}">Qualifications List</a>
+                            <li>
+                                <i class="menu-icon fa fa-plus"></i><a href="{{ url('qualification') }}">Qualifications
+                                    List</a>
                             </li>
 
 
                             <li>
-                                <i class="menu-icon fa fa-plus"></i><a href="{{url('height')}}">Locations List</a>
+                                <i class="menu-icon fa fa-plus"></i><a href="{{ url('height') }}">Locations List</a>
                             </li>
-                             <li>
-                                <i class="menu-icon fa fa-plus"></i><a href="{{url('advance-skills')}}">Advance Skills List</a>
+                            <li>
+                                <i class="menu-icon fa fa-plus"></i><a href="{{ url('advance-skills') }}">Advance
+                                    Skills List</a>
                             </li>
 
 
                         </ul>
                     </li>
                     <li class="menu-item-has-children dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="menu-icon fa fa-plus-square-o"></i>Help Section</a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false"><i class="menu-icon fa fa-plus-square-o"></i>Help Section</a>
                         <ul class="sub-menu children dropdown-menu" role="menu">
 
-                    <li>
+                            <li>
 
-                        <a href="{{url('about')}}"> <i class="menu-icon fa fa-info"></i>About Us</a>
+                                <a href="{{ url('about') }}"> <i class="menu-icon fa fa-info"></i>About Us</a>
 
-                    </li>
+                            </li>
 
-                     <li>
+                            <li>
 
-                        <a href="{{url('term-condition')}}"> <i class="menu-icon fa fa-gavel"></i>Terms & Conditions</a>
+                                <a href="{{ url('term-condition') }}"> <i class="menu-icon fa fa-gavel"></i>Terms &
+                                    Conditions</a>
 
-                    </li>
+                            </li>
 
-                     <li>
+                            <li>
 
-                        <a href="{{url('privacy-policy')}}"> <i class="menu-icon fa fa-gavel"></i>Privacy Policy</a>
+                                <a href="{{ url('privacy-policy') }}"> <i class="menu-icon fa fa-gavel"></i>Privacy
+                                    Policy</a>
 
-                    </li>
+                            </li>
 
-                    <li>
+                            <li>
 
-                        <a href="{{url('setting')}}"> <i class="menu-icon fa fa-cogs"></i>Settings</a>
+                                <a href="{{ url('setting') }}"> <i class="menu-icon fa fa-cogs"></i>Settings</a>
 
-                    </li>
+                            </li>
 
-                     <li>
+                            <li>
 
-                        <a href="{{url('faq')}}"> <i class="menu-icon fa fa-question"></i>FAQ's</a>
+                                <a href="{{ url('faq') }}"> <i class="menu-icon fa fa-question"></i>FAQ's</a>
 
-                    </li>
+                            </li>
 
 
                         </ul>
@@ -295,7 +227,7 @@
 
 
 
-     <!-- Right Panel -->
+    <!-- Right Panel -->
 
 
 
@@ -323,37 +255,42 @@
 
                         <!--<button type="button" id="eraser" style="float: right;margin-top: 7px;margin-right: 83px;background: darkred;color: white;border-radius: 15%;" onclick="return confirm('Are you sure to erase all data added by Grobiz..?')">Erase Data</button>-->
 
-                        </div>
-
-                      <div class="col-sm-4">
-                    <div class="user-area dropdown float-right">
-
-
-
-
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-
-                            <img class="user-avatar rounded-circle" src="{{asset('templates-assets/myadminweb/images/admin.jpg')}}" alt="User">
-
-                        </a>
-
-
-
-                        <div class="user-menu dropdown-menu">
-
-                            <a class="nav-link" href="{{url('profile')}}"><i class="fa fa- user"></i>My Profile</a>
-
-
-
-                            <a class="nav-link" href="{{url('account')}}"><i class="fa fa -cog"></i>Account</a>
-
-
-
-                            <a class="nav-link" href="{{url('logout')}}"><i class="fa fa-power -off"></i>Logout</a>
-
-                        </div>
-
                     </div>
+
+                    <div class="col-sm-4">
+                        <div class="user-area dropdown float-right">
+
+
+
+
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+
+                                <img class="user-avatar rounded-circle"
+                                    src="{{ asset('templates-assets/myadminweb/images/admin.jpg') }}" alt="User">
+
+                            </a>
+
+
+
+                            <div class="user-menu dropdown-menu">
+
+                                <a class="nav-link" href="{{ url('profile') }}"><i class="fa fa- user"></i>My
+                                    Profile</a>
+
+
+
+                                <a class="nav-link" href="{{ url('account') }}"><i
+                                        class="fa fa -cog"></i>Account</a>
+
+
+
+                                <a class="nav-link" href="{{ url('logout') }}"><i
+                                        class="fa fa-power -off"></i>Logout</a>
+
+                            </div>
+
+                        </div>
                     </div>
                 </div>
 
@@ -379,51 +316,51 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/plugins.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/plugins.js') }}"></script>
 
 
 
     <!-- Tables   -->
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/datatables.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/datatables.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/dataTables.bootstrap.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/dataTables.buttons.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/dataTables.buttons.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/buttons.bootstrap.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/buttons.bootstrap.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/jszip.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/jszip.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/pdfmake.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/pdfmake.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/vfs_fonts.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/vfs_fonts.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/buttons.html5.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/buttons.html5.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/buttons.print.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/buttons.print.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/buttons.colVis.min.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/buttons.colVis.min.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/data-table/datatables-init.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/data-table/datatables-init.js') }}"></script>
 
-    <script src="{{asset('templates-assets/myadminweb/js/main.js')}}"></script>
+    <script src="{{ asset('templates-assets/myadminweb/js/main.js') }}"></script>
 
 
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/lib/chart-js/Chart.bundle.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/lib/chart-js/Chart.bundle.js') }}"></script> -->
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/dashboard.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/dashboard.js') }}"></script> -->
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/widgets.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/widgets.js') }}"></script> -->
 
-     <!-- <script src="{{asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.js') }}"></script> -->
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.min.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.min.js') }}"></script> -->
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.sampledata.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/lib/vector-map/jquery.vmap.sampledata.js') }}"></script> -->
 
-    <!-- <script src="{{asset('templates-assets/myadminweb/js/lib/vector-map/country/jquery.vmap.world.js')}}"></script> -->
+    <!-- <script src="{{ asset('templates-assets/myadminweb/js/lib/vector-map/country/jquery.vmap.world.js') }}"></script> -->
 </body>
 
 </html>

@@ -8,7 +8,7 @@
 
     @foreach($settings as $setting)
 
-        @php 
+        @php
         $contact = $setting->contact;
         $email = $setting->email;
         $address = $setting->address;
@@ -16,14 +16,14 @@
         $youtube = $setting->youtube;
         $instagram = $setting->instagram;
         $twitter = $setting->twitter;
-        $id = $setting->id; 
+        $id = $setting->id;
         @endphp
 
     @endforeach
 
 @else
 
-    @php 
+    @php
     $contact = "";
     $email = "";
     $address = "";
@@ -31,7 +31,7 @@
     $youtube = "";
     $instagram = "";
     $twitter = "";
-    $id = 0; 
+    $id = 0;
      @endphp
 
 @endif
@@ -69,7 +69,7 @@
 
                                 <div class="card-header"><strong>Update Settings</strong></div>
 
-                                <div class="card-body card-block"> 
+                                <div class="card-body card-block">
 
                                     @include('templates.myadmin.messages')
 
@@ -107,7 +107,7 @@
                                        </div>
                                         <div class="form-group col-md-4">
 
-                                        <label for="vat" class="form-control-label">Facebook</label> 
+                                        <label for="vat" class="form-control-label">Facebook</label>
 
                                         <input type="text" id="facebook" name="facebook" placeholder="" class="form-control" value="{{$facebook}}" >
 
@@ -117,7 +117,7 @@
 
                                         <div class="form-group col-md-4">
 
-                                        <label for="vat" class="form-control-label">Youtube</label> 
+                                        <label for="vat" class="form-control-label">Youtube</label>
 
                                         <input type="text" id="youtube" name="youtube" placeholder="" class="form-control" value="{{$youtube}}" >
 
@@ -143,9 +143,9 @@
                                         <small class="text-danger">{{ $errors->first('twitter') }}</small>
 
                                        </div>
-                                       
 
-                                        <div class="card-footer col-md-12">  
+
+                                        <div class="card-footer col-md-12">
 
                                             <button type="submit" class="btn btn-success btn-sm">
 
@@ -153,9 +153,9 @@
 
                                             </button>
 
-                                                        
 
-                                            <button type="button" class="btn btn-info btn-sm"><i class="fa fa-times-circle-o" aria-hidden="true"></i> <a href="{{url('setting')}}">Cancel</a></button> 
+
+                                            <button type="button" class="btn btn-info btn-sm"><i class="fa fa-times-circle-o" aria-hidden="true"></i> <a href="{{url('setting')}}">Cancel</a></button>
 
                                         </div>
 
@@ -177,7 +177,7 @@
 
     </div>
 
-</div>                                          
+</div>
  <script>
 //<![CDATA[
 
@@ -195,6 +195,6 @@
        filebrowserUploadUrl  :"{{asset('templates-assets/myadminweb/ckeditor/js/ckeditor/filemanager/connectors/php/upload.php?Type=File')}}",
        filebrowserImageUploadUrl : "{{asset('templates-assets/myadminweb/ckeditor/js/ckeditor/filemanager/connectors/php/upload.php?Type=Image')}}",
        filebrowserFlashUploadUrl : "{{asset('templates-assets/myadminweb/ckeditor/js/ckeditor/filemanager/connectors/php/upload.php?Type=Flash')}}"
-   });      
-</script>                   
+   });
+</script>
 @endsection
