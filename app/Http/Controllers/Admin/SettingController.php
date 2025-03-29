@@ -177,7 +177,7 @@ class SettingController extends Controller
         }
 
         $video->save();
-        return redirect('training_videos')->with('success', 'Updated Successfully');
+        return redirect('videos')->with('success', 'Updated Successfully');
     }
 
 
