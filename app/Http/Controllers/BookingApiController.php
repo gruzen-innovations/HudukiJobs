@@ -1156,7 +1156,7 @@ class BookingApiController extends Controller
 
         public function followUnfollowCompany(Request $request)
         {
-             
+
                 if (!$request->has('follow_id') || empty($request->get('follow_id'))) {
                         return response()->json([
                                 'status' => 0,
@@ -1212,6 +1212,43 @@ class BookingApiController extends Controller
                                 'status' => 0,
                                 'msg' => "Invalid Follow ID or Employee ID format.",
                         ], 400);
+                }
+        }
+
+
+        public function getFollowCompanyList(Request $request)
+        {
+                // Validate required parameters
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                try {
+                        // Fetch followed companies
+                        $followedCompanies = FollowCompany::where('employee_auto_id', $request->get('employee_auto_id'))
+                                ->where('follow', true) // Ensure we only fetch followed companies
+                                ->get();
+
+                        if ($followedCompanies->isEmpty()) {
+                                return response()->json([
+                                        'status' => 0,
+                                        'msg' => "No followed companies found.",
+                                ]);
+                        }
+
+                        return response()->json([
+                                'status' => 1,
+                                'msg' => "Success",
+                                'data' => $followedCompanies,
+                        ]);
+                } catch (\Exception $e) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Something went wrong! Please try again.",
+                        ], 500);
                 }
         }
 }

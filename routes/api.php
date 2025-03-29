@@ -96,6 +96,7 @@ Route::post('get_emergency_information', [UserApiController::class, 'getEmergenc
 //Company
 Route::post('get_company_list', [BookingApiController::class, 'getCompanyList']);
 Route::post('follow_unfollow_company', [BookingApiController::class, 'followUnfollowCompany']);
+Route::post('get_follow_company_list', [BookingApiController::class, 'getFollowCompanyList']);
 
 
 //Remainder
