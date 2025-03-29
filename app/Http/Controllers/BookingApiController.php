@@ -1251,4 +1251,91 @@ class BookingApiController extends Controller
                         ], 500);
                 }
         }
+
+
+        public function getCompanyFollowJobList(Request $request)
+        {
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                // Fetch the list of followed companies for the employee
+                $followedCompanies = FollowCompany::where('employee_auto_id', $request->get('employee_auto_id'))
+                        ->where('follow', true)
+                        ->pluck('follow_id');
+
+                if ($followedCompanies->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No followed companies found.",
+                        ]);
+                }
+
+                // Fetch jobs from the followed companies
+                $joblists = Jobs::whereIn('employer_auto_id', $followedCompanies)
+                        ->where('active_status', 'Active')
+                        ->get();
+
+                if ($joblists->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No jobs found from followed companies.",
+                        ]);
+                }
+
+                $jobDetails = [];
+                foreach ($joblists as $job) {
+                        $employerDetails = UserRegister::where('_id', $job->employer_auto_id)
+                                ->where('Register_as', 'Employer')
+                                ->get();
+
+                        $saveJobs = SaveJobs::where('job_auto_id', $job->_id)
+                                ->where('employee_auto_id', $request->get('employee_auto_id'))
+                                ->get();
+
+                        $isSaveJob = $saveJobs->isNotEmpty() ? $saveJobs->first()->is_save_job : '';
+
+                        $jobDetails[] = [
+                                "job_auto_id" => $job->_id,
+                                "employer_auto_id" => $job->employer_auto_id,
+                                "job_role" => $job->job_role,
+                                "job_type" => $job->job_type,
+                                "job_location" => $job->job_location,
+                                "required_qualification" => $job->required_qualification,
+                                "min_salary" => $job->min_salary,
+                                "max_salary" => $job->max_salary,
+                                "hide_salary" => $job->hide_salary,
+                                "hiring_process" => $job->hiring_process,
+                                "walkIn_Interview" => $job->walkIn_Interview,
+                                "job_option" => $job->job_option,
+                                "active_status" => $job->active_status,
+                                "experience_from_years" => $job->experience_from_years,
+                                "experience_to_years" => $job->experience_to_years,
+                                "is_save_job" => $isSaveJob,
+                                "no_of_vacancies" => $job->no_of_vacancies,
+                                "year_of_passing_from" => $job->year_of_passing_from,
+                                "year_of_passing_to" => $job->year_of_passing_to,
+                                "skills" => $job->skills,
+                                "gender" => $job->gender,
+                                "percent" => $job->percent,
+                                "cgpa" => $job->cgpa,
+                                "job_description" => $job->job_description,
+                                "recruiter_email" => $job->recruiter_email,
+                                "recruiter_contact_no" => $job->recruiter_contact_no,
+                                "walkin_location" => $job->walkin_location,
+                                "walk_in_time" => $job->walk_in_time,
+                                "walk_in_date" => $job->walk_in_date,
+                                "employer_details" => $employerDetails,
+                        ];
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => 'Success',
+                        'data' => $jobDetails,
+                ]);
+        }
 }
