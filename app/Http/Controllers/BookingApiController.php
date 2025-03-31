@@ -26,6 +26,8 @@ use App\SearchHistory;
 use App\FollowCompany;
 use App\TrainingVideos;
 use App\RateEmployee;
+use App\Subject;
+use App\SubjectPdf;
 use MongoDB\BSON\ObjectId;
 
 
@@ -1388,5 +1390,59 @@ class BookingApiController extends Controller
                         'status' => 1,
                         'msg' => "Employee rating added successfully",
                 ]);
+        }
+
+        public function getSubject(Request $request)
+        {
+                $Subject = Subject::get();
+
+                if ($Subject->isEmpty()) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "No Subjects  found.",
+                        ]);
+                }
+
+                return response()->json([
+                        'status' => 1,
+                        'msg' => "Success",
+                        'data' => $Subject,
+                ]);
+        }
+
+
+        public function getSubjectpdf(Request $request)
+        {
+                // Validate required parameters
+                if (!$request->has('subject_id') || empty($request->get('subject_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Subject ID is required.",
+                        ], 400);
+                }
+
+                try {
+                        // Fetch followed companies
+                        $SubjecPdf = SubjectPdf::where('subject_id', $request->get('subject_id'))
+                                ->get();
+
+                        if ($SubjecPdf->isEmpty()) {
+                                return response()->json([
+                                        'status' => 0,
+                                        'msg' => "No Subject Pdf  Found",
+                                ]);
+                        }
+
+                        return response()->json([
+                                'status' => 1,
+                                'msg' => "Success",
+                                'data' => $SubjecPdf,
+                        ]);
+                } catch (\Exception $e) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Something went wrong! Please try again.",
+                        ], 500);
+                }
         }
 }

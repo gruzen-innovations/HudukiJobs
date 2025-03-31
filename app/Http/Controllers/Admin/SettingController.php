@@ -303,7 +303,7 @@ class SettingController extends Controller
 
 
     // delete catalogue
-    public function deleteCatalogue($subject_id)
+    public function deleteSubject($subject_id)
     {
         $catalogue = Subject::find($subject_id);
 

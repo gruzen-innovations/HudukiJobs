@@ -1,6 +1,18 @@
 @extends('templates.myadmin.layout')
 @section('content')
 
+    <style>
+        @media (min-width: 576px) {
+            .navbar-expand-sm {
+                flex-wrap: wrap !important;
+                justify-content: flex-start;
+            }
+
+            a {
+                text-decoration: none !important;
+            }
+        }
+    </style>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -43,7 +55,7 @@
                                 <td>
                                     @if ($catalogue->pdf->isNotEmpty())
                                         @foreach ($catalogue->pdf as $sub_index => $pdf)
-                                        {{ $sub_index + 1 }})
+                                            {{ $sub_index + 1 }})
                                             <a href="{{ asset('images/pdf/' . $pdf->pdf) }}" target="_blank"
                                                 class="btn btn-info btn-sm">
                                                 <i class="fa fa-file-pdf"></i> View PDF
