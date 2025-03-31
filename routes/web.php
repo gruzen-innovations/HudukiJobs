@@ -198,5 +198,14 @@ Route::get('/add-video', [SettingController::class, 'add_video']);
 Route::post('/store-video', [SettingController::class, 'store_video']);
 Route::post('delete-video/{id}', [SettingController::class, 'delete_video']);
 
+
+Route::get('subjects',[SettingController::class,'getSubjects']);
+Route::post('add-subject',[SettingController::class,'addSubject']);
+Route::post('update-subject',[SettingController::class,'updateSubject']);
+Route::get('delete-subject/{id}',[SettingController::class,'deleteSubject']);
+
+Route::post('add-subject-pdf',[SettingController::class,'addSubjectPdf']);
+Route::get('delete-subject-pdf/{id}',[SettingController::class,'deleteSubjectPdf']);
+
 //test api resp
 Route::get('test_resp', [HMBIController::class, 'test_resp']);

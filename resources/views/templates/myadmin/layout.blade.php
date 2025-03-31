@@ -128,6 +128,13 @@
 
                     <li>
 
+                        <a href="{{ url('subjects') }}"> <i class="menu-icon fa fa-file"></i>
+                            Subjects</a>
+
+                    </li>
+
+                    <li>
+
                         <a href="{{ url('notifications') }}"> <i class="menu-icon fa fa-map-pin"></i>Notifications</a>
 
                     </li>
