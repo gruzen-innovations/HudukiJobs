@@ -523,7 +523,11 @@ class BookingApiController extends Controller
                                         "walkin_location" => $uts->walkin_location,
                                         "walk_in_time" => $uts->walk_in_time,
                                         "walk_in_date" => $uts->walk_in_date,
+                                        "incentives"=>$uts->incentives,
+                                        "benefits"=>$uts->benefits,
+                                        "allowances"=>$uts->allowances,
                                         "employer_details" => $emp_details
+
                                 );
                         }
                         return response()->json([
@@ -688,6 +692,9 @@ class BookingApiController extends Controller
                                         "walkin_location" => $uts->walkin_location,
                                         "walk_in_time" => $uts->walk_in_time,
                                         "walk_in_date" => $uts->walk_in_date,
+                                        "incentives"=>$uts->incentives,
+                                        "benefits"=>$uts->benefits,
+                                        "allowances"=>$uts->allowances,
                                         "employer_details" => $emp_details
                                 );
                         }
