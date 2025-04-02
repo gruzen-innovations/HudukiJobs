@@ -456,7 +456,6 @@ class BookingApiController extends Controller
                 $employee_auto_id = $request->get('employee_auto_id');
                 $date = $request->get('date');
                 $temp = [];
-
                 $wjdetails = Jobs::ORDERBY('id', '=', 'DESC')->where('walkIn_Interview', '=', 'Yes')->where('active_status', '=', 'Active')->get();
                 if ($wjdetails->isNotEmpty()) {
                         foreach ($wjdetails as $slot) {
@@ -493,6 +492,11 @@ class BookingApiController extends Controller
                                 } else {
                                         $is_save_job =  '';
                                 }
+                                
+                                $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
+                                ->where('follow_id', $uts->employer_auto_id)
+                                ->first();
+
                                 $atdatewisetdetails[] = array(
                                         "job_auto_id" => $uts->_id,
                                         "employer_auto_id" => $uts->employer_auto_id,
@@ -526,6 +530,7 @@ class BookingApiController extends Controller
                                         "incentives"=>$uts->incentives,
                                         "benefits"=>$uts->benefits,
                                         "allowances"=>$uts->allowances,
+                                        'follow' => $follower->follow ?? 'false',
                                         "employer_details" => $emp_details
 
                                 );
@@ -662,6 +667,12 @@ class BookingApiController extends Controller
                                         }
                                 }
 
+                                $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
+                                ->where('follow_id', $uts->employer_auto_id)
+                                ->first();
+
+                                
+
                                 $atdatewisetdetails[] = array(
                                         "job_auto_id" => $uts->_id,
                                         "employer_auto_id" => $uts->employer_auto_id,
@@ -695,7 +706,9 @@ class BookingApiController extends Controller
                                         "incentives"=>$uts->incentives,
                                         "benefits"=>$uts->benefits,
                                         "allowances"=>$uts->allowances,
+                                        'follow' => $follower->follow ?? 'false',
                                         "employer_details" => $emp_details
+
                                 );
                         }
                         return response()->json([
@@ -1012,6 +1025,8 @@ class BookingApiController extends Controller
 
         public function getCompanyList(Request $request)
         {
+              
+
                 // Fetch companies where Register_as is 'Employer'
                 $company_list = UserRegister::where('Register_as', 'Employer')->get();
 
@@ -1022,6 +1037,17 @@ class BookingApiController extends Controller
                         ]);
                 }
 
+                foreach($company_list as $company){
+                        $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
+                        ->where('follow_id', $company->id)
+                        ->first();
+
+                        $follow = $follower->follow ?? 'false';
+
+                        $company->follow = $follow;
+                }
+
+                
                 return response()->json([
                         'status' => 1,
                         'msg' => "Success",
