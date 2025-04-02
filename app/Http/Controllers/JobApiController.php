@@ -221,7 +221,9 @@ class JobApiController extends Controller
              $atdatewisetdetails[] = array("save_job_auto_id"=>$curs->_id,"is_save_job"=>$curs->is_save_job,"job_auto_id"=>$uts->_id,"employer_auto_id"=>$uts->employer_auto_id,"job_role"=>$uts->job_role,"job_type"=>$uts->job_type,"job_location"=>$uts->job_location,"required_qualification"=>$uts->required_qualification,
              "min_salary"=>$uts->min_salary,"max_salary"=>$uts->max_salary, "hide_salary"=>$uts->hide_salary,"hiring_process"=>$uts->hiring_process, "walkIn_Interview"=>$uts->walkIn_Interview,"job_option"=>$uts->job_option,
              "experience_from_years"=>$uts->experience_from_years,"experience_to_years"=>$uts->experience_to_years, "no_of_vacancies"=>$uts->no_of_vacancies,"year_of_passing_from"=>$uts->year_of_passing_from, "year_of_passing_to"=>$uts->year_of_passing_to,"skills"=>$uts->skills,"gender"=>$uts->gender,
-             "percent"=>$uts->percent,"cgpa"=>$uts->cgpa,"job_description"=>$uts->job_description,"recruiter_email"=>$uts->recruiter_email,"recruiter_contact_no"=>$uts->recruiter_contact_no,"walkin_location"=>$uts->walkin_location,"walk_in_time"=>$uts->walk_in_time,"walk_in_date"=>$uts->walk_in_date,"employer_details"=>$emp_details);
+             "percent"=>$uts->percent,"cgpa"=>$uts->cgpa,"job_description"=>$uts->job_description,"recruiter_email"=>$uts->recruiter_email,"recruiter_contact_no"=>$uts->recruiter_contact_no,"walkin_location"=>$uts->walkin_location,"walk_in_time"=>$uts->walk_in_time,"walk_in_date"=>$uts->walk_in_date,"incentives"=>$uts->incentives,
+             "benefits"=>$uts->benefits,
+             "allowances"=>$uts->allowances,"employer_details"=>$emp_details);
 	         }
                 
             }else{
@@ -289,7 +291,9 @@ class JobApiController extends Controller
                      $atdatewisetdetails[] = array("job_auto_id"=>$uts->_id,"employer_auto_id"=>$uts->employer_auto_id,"job_role"=>$uts->job_role,"job_type"=>$uts->job_type,"job_location"=>$uts->job_location,"required_qualification"=>$uts->required_qualification,
                      "min_salary"=>$uts->min_salary,"max_salary"=>$uts->max_salary, "hide_salary"=>$uts->hide_salary,"hiring_process"=>$uts->hiring_process, "walkIn_Interview"=>$uts->walkIn_Interview,"job_option"=>$uts->job_option,"active_status"=>$uts->active_status,
                      "experience_from_years"=>$uts->experience_from_years,"experience_to_years"=>$uts->experience_to_years, "no_of_vacancies"=>$uts->no_of_vacancies,"year_of_passing_from"=>$uts->year_of_passing_from, "year_of_passing_to"=>$uts->year_of_passing_to,"skills"=>$uts->skills,"gender"=>$uts->gender,
-                     "percent"=>$uts->percent,"cgpa"=>$uts->cgpa,"job_description"=>$uts->job_description,"recruiter_email"=>$uts->recruiter_email,"recruiter_contact_no"=>$uts->recruiter_contact_no,"walkin_location"=>$uts->walkin_location,"walk_in_time"=>$uts->walk_in_time,"walk_in_date"=>$uts->walk_in_date,"employer_details"=>$emp_details);
+                     "percent"=>$uts->percent,"cgpa"=>$uts->cgpa,"job_description"=>$uts->job_description,"recruiter_email"=>$uts->recruiter_email,"recruiter_contact_no"=>$uts->recruiter_contact_no,"walkin_location"=>$uts->walkin_location,"walk_in_time"=>$uts->walk_in_time,"walk_in_date"=>$uts->walk_in_date,"incentives"=>$uts->incentives,
+                     "benefits"=>$uts->benefits,
+                     "allowances"=>$uts->allowances,"employer_details"=>$emp_details);
         	         }
                         
                     }else{
