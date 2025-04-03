@@ -859,6 +859,8 @@ class BookingApiController extends Controller
                                 }
 
                                 unset($atdetails);
+                                $ratings = RateEmployee::where('employee_auto_id', $at->employee_auto_id)->get();
+                                $averageRating = $ratings->isNotEmpty() ? $ratings->avg('rate') : null;
                                 $atdetails[] = array(
                                         "resume" => $at->resume,
                                         "video_resume" => $at->video_resume,
@@ -882,6 +884,8 @@ class BookingApiController extends Controller
                                         "advance_skills" => $at->advance_skills,
                                         "current_ctc" => $at->current_ctc,
                                         "expected_ctc" => $at->expected_ctc,
+                                        "open_to_work"=>$at->open_to_work,
+                                        "average_rating" => $averageRating,
                                         "Qualifications_data" => $quadetails,
                                         "work_details_data" => $wfdetails,
                                         "rating" => $at->rating
@@ -1054,6 +1058,44 @@ class BookingApiController extends Controller
                         'data' => $company_list,
                 ]);
         }
+
+        public function createCandidateRemainder(Request $request)
+        {
+                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employee ID is required.",
+                        ], 400);
+                }
+
+                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Employer ID is required.",
+                        ], 400);
+                }
+
+                $CandidateRemainder = new CandidateRemainder();
+                $CandidateRemainder->employee_auto_id = $request->get('employee_auto_id');
+                $CandidateRemainder->employer_auto_id = $request->get('employer_auto_id');
+                $CandidateRemainder->call_date = $request->get('call_date', '');
+                $CandidateRemainder->call_time = $request->get('call_time', '');
+
+                if ($CandidateRemainder->save()) {
+                        return response()->json([
+                                'status' => 1,
+                                'msg' => "Remainder added successfully",
+                        ]);
+                }
+
+                // Return error if saving fails
+                return response()->json([
+                        'status' => 0,
+                        'msg' => "Failed to add remainder. Please try again.",
+                ], 500);
+        }
+
+
 
         public function getCandidateRemainder(Request $request)
         {

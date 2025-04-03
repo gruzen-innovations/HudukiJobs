@@ -1362,8 +1362,10 @@ class UserApiController extends Controller
                     "advance_skills" => $at->advance_skills,
                     "current_ctc" => $at->current_ctc,
                     "expected_ctc" => $at->expected_ctc,
+                    "open_to_work"=> $at->open_to_work,
                     "Qualifications_data" => $quadetails,
-                    "work_details_data" => $wfdetails
+                    "work_details_data" => $wfdetails,
+                   
                 );
             }
             return response()->json([
