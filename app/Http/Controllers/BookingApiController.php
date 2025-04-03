@@ -492,10 +492,10 @@ class BookingApiController extends Controller
                                 } else {
                                         $is_save_job =  '';
                                 }
-                                
+
                                 $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
-                                ->where('follow_id', $uts->employer_auto_id)
-                                ->first();
+                                        ->where('follow_id', $uts->employer_auto_id)
+                                        ->first();
 
                                 $atdatewisetdetails[] = array(
                                         "job_auto_id" => $uts->_id,
@@ -527,9 +527,9 @@ class BookingApiController extends Controller
                                         "walkin_location" => $uts->walkin_location,
                                         "walk_in_time" => $uts->walk_in_time,
                                         "walk_in_date" => $uts->walk_in_date,
-                                        "incentives"=>$uts->incentives,
-                                        "benefits"=>$uts->benefits,
-                                        "allowances"=>$uts->allowances,
+                                        "incentives" => $uts->incentives,
+                                        "benefits" => $uts->benefits,
+                                        "allowances" => $uts->allowances,
                                         'follow' => $follower->follow ?? 'false',
                                         "employer_details" => $emp_details
 
@@ -668,10 +668,10 @@ class BookingApiController extends Controller
                                 }
 
                                 $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
-                                ->where('follow_id', $uts->employer_auto_id)
-                                ->first();
+                                        ->where('follow_id', $uts->employer_auto_id)
+                                        ->first();
 
-                                
+
 
                                 $atdatewisetdetails[] = array(
                                         "job_auto_id" => $uts->_id,
@@ -703,9 +703,9 @@ class BookingApiController extends Controller
                                         "walkin_location" => $uts->walkin_location,
                                         "walk_in_time" => $uts->walk_in_time,
                                         "walk_in_date" => $uts->walk_in_date,
-                                        "incentives"=>$uts->incentives,
-                                        "benefits"=>$uts->benefits,
-                                        "allowances"=>$uts->allowances,
+                                        "incentives" => $uts->incentives,
+                                        "benefits" => $uts->benefits,
+                                        "allowances" => $uts->allowances,
                                         'follow' => $follower->follow ?? 'false',
                                         "employer_details" => $emp_details
 
@@ -1025,7 +1025,7 @@ class BookingApiController extends Controller
 
         public function getCompanyList(Request $request)
         {
-              
+
 
                 // Fetch companies where Register_as is 'Employer'
                 $company_list = UserRegister::where('Register_as', 'Employer')->get();
@@ -1037,52 +1037,21 @@ class BookingApiController extends Controller
                         ]);
                 }
 
-                foreach($company_list as $company){
+                foreach ($company_list as $company) {
                         $follower = FollowCompany::where('employee_auto_id', $request->employee_auto_id)
-                        ->where('follow_id', $company->id)
-                        ->first();
+                                ->where('follow_id', $company->id)
+                                ->first();
 
                         $follow = $follower->follow ?? 'false';
 
                         $company->follow = $follow;
                 }
 
-                
+
                 return response()->json([
                         'status' => 1,
                         'msg' => "Success",
                         'data' => $company_list,
-                ]);
-        }
-
-        public function createCandidateRemainder(Request $request)
-        {
-                // Check if employee_auto_id is missing
-                if (!$request->has('employer_auto_id') || empty($request->get('employer_auto_id'))) {
-                        return response()->json([
-                                'status' => 0,
-                                'msg' => "Employer ID is required.",
-                        ], 400);
-                }
-
-                if (!$request->has('employee_auto_id') || empty($request->get('employee_auto_id'))) {
-                        return response()->json([
-                                'status' => 0,
-                                'msg' => "Employee ID is required.",
-                        ], 400);
-                }
-
-                $CandidateRemainder = new CandidateRemainder();
-                $CandidateRemainder->employee_auto_id = $request->get('employee_auto_id');
-                $CandidateRemainder->employer_auto_id = $request->get('employer_auto_id');
-                $CandidateRemainder->call_date = $request->get('call_date', '');
-                $CandidateRemainder->call_time = $request->get('call_time', '');
-
-                $CandidateRemainder->save();
-
-                return response()->json([
-                        'status' => 1,
-                        'msg' => "Candidate Remainder added successfully",
                 ]);
         }
 
@@ -1095,22 +1064,44 @@ class BookingApiController extends Controller
                         ], 400);
                 }
 
-
                 $remainder = CandidateRemainder::where('employer_auto_id', $request->get('employer_auto_id'))->get();
 
                 if ($remainder->isEmpty()) {
                         return response()->json([
                                 'status' => 0,
-                                'msg' => "No search history found",
+                                'msg' => "No Data found",
                         ]);
                 }
+
+                // Extract employee_auto_id from each remainder entry
+                $employeeIds = $remainder->pluck('employee_auto_id')->unique()->toArray();
+
+                // Fetch employee details based on employee_auto_id
+                $employees = Employee::whereIn('employee_auto_id', $employeeIds)->get([
+                        'employee_auto_id',
+                        'first_name',
+                        'last_name'
+                ]);
+
+                // Map employee details to their corresponding remainders
+                $remainderData = $remainder->map(function ($item) use ($employees) {
+                        $employee = $employees->firstWhere('employee_auto_id', $item->employee_auto_id);
+                        return [
+                                'remainder_id' => $item->id,
+                                'employee_auto_id' => $item->employee_auto_id,
+                                'employer_auto_id' => $item->employer_auto_id,
+                                'employee_first_name' => $employee->first_name ?? null,
+                                'employee_last_name' => $employee->last_name ?? null,
+                        ];
+                });
 
                 return response()->json([
                         'status' => 1,
                         'msg' => "Success",
-                        'data' => $remainder,
+                        'data' => $remainderData,
                 ]);
         }
+
 
 
         public function deleteCandidateRemainder(Request $request)
