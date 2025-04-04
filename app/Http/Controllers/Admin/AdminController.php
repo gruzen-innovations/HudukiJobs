@@ -15,7 +15,10 @@ use App\UserRegister;
 use App\Traits\Features;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Subject;
 use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
+use App\Employee;
 
 class AdminController extends Controller
 {
@@ -180,30 +183,183 @@ class AdminController extends Controller
         return redirect('MyDashboard')->with('success', 'Successfully Logged Out');
     }
 
+    // public function home()
+    // {
+    //     $vid = Session::get('AccessToken');
+
+    //     $date = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+    //     $order_date = $date->format('Y-m-d');
+
+    //     $wholesalers = UserRegister::where('Register_as', '=', 'Employer')->get();
+    //     $wholesaler_count = count($wholesalers);
+
+    //     $employee = UserRegister::where('Register_as', '=', 'Employee')->get();
+    //     $employee_count = count($employee);
+
+    //     $subject_count = Subject::count();
+
+    //     $enquiry = EcommPlans::get();
+    //     $enquiry_count = count($enquiry);
+
+
+    //     //   $features = $this->getfeatures();
+    //     //   if(empty($features)){
+    //     //       return redirect('MyDashboard')->with( 'error', "Something went wrong");
+    //     //   }
+    //     //   else{
+
+    //     return view('templates.myadmin.index')->with(['wholesaler_count' => $wholesaler_count, 'employee_count' =>
+    //     $employee_count, 'enquiry_count' => $enquiry_count, 'subject_count' => $subject_count]);
+    //     // }
+    // }
+
+
+
+
+
     public function home()
     {
-        $vid = Session::get('AccessToken');
+        $wholesaler_count = UserRegister::where('Register_as', '=', 'Employer')->count();
+        $employee_count = UserRegister::where('Register_as', '=', 'Employee')->count();
+       
+        $enquiry_count = EcommPlans::count();
 
-        $date = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
-        $order_date = $date->format('Y-m-d');
+        // Fetching all relevant data for charts
+        $employers = UserRegister::where('Register_as', 'Employer')->get(['updated_at']);
+        $employees = Employee::all(['last_seen_datetime']);
 
-        $wholesalers = UserRegister::where('Register_as', '=', 'Employer')->get();
-        $wholesaler_count = count($wholesalers);
+        $today = Carbon::today();
+        $active_users_today_count = 0;
 
-        $employee = UserRegister::where('Register_as', '=', 'Employee')->get();
-        $employee_count = count($employee);
+        foreach ($employees as $emp) {
+        $parts = explode(',', $emp->last_seen_datetime);
+        if (count($parts) < 1) continue; $datePart=trim($parts[0]); try { $carbonDate=Carbon::createFromFormat('d-m-Y',
+            $datePart); if ($carbonDate->isSameDay($today)) {
+            $active_users_today_count++;
+            }
+            } catch (\Exception $e) {
+            continue; // Ignore malformed date entries
+            }
+            }
 
-        $enquiry = EcommPlans::get();
-        $enquiry_count = count($enquiry);
+        // Chart Data Arrays
+        $weekly = [
+            'labels' => [],
+            'employers' => [],
+            'employees' => []
+        ];
 
+        $monthly = [
+            'labels' => [],
+            'employers' => [],
+            'employees' => []
+        ];
 
-        //   $features = $this->getfeatures();
-        //   if(empty($features)){
-        //       return redirect('MyDashboard')->with( 'error', "Something went wrong");
-        //   }
-        //   else{
+        $yearly = [
+            'labels' => [],
+            'employers' => [],
+            'employees' => []
+        ];
 
-        return view('templates.myadmin.index')->with(['wholesaler_count' => $wholesaler_count, 'employee_count' => $employee_count, 'enquiry_count' => $enquiry_count]);
-        // }
+        // Initialize Weekly Labels (last 7 days)
+        $startOfWeek = Carbon::now()->startOfWeek();
+        for ($i = 0; $i < 7; $i++) {
+            $day = $startOfWeek->copy()->addDays($i)->format('D');
+            $weekly['labels'][] = $day;
+            $weekly['employers'][$day] = 0;
+            $weekly['employees'][$day] = 0;
+        }
+
+        // Initialize Monthly Labels (last 4 months)
+        for ($i = 3; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i)->format('M');
+            $monthly['labels'][] = $month;
+            $monthly['employers'][$month] = 0;
+            $monthly['employees'][$month] = 0;
+        }
+
+        // Initialize Yearly Labels (last 3 years)
+        for ($i = 2; $i >= 0; $i--) {
+            $year = Carbon::now()->subYears($i)->format('Y');
+            $yearly['labels'][] = $year;
+            $yearly['employers'][$year] = 0;
+            $yearly['employees'][$year] = 0;
+        }
+
+        // Parse Employers
+        foreach ($employers as $emp) {
+            $updated = Carbon::parse($emp->updated_at);
+
+            // Weekly
+            $day = $updated->format('D');
+            if (in_array($day, $weekly['labels'])) {
+                $weekly['employers'][$day]++;
+            }
+
+            // Monthly
+            $month = $updated->format('M');
+            if (in_array($month, $monthly['labels'])) {
+                $monthly['employers'][$month]++;
+            }
+
+            // Yearly
+            $year = $updated->format('Y');
+            if (in_array($year, $yearly['labels'])) {
+                $yearly['employers'][$year]++;
+            }
+        }
+
+        // Parse Employees (last_seen_datetime = "dd-mm-yyyy,HH:MM:SS")
+        foreach ($employees as $emp) {
+            $parts = explode(',', $emp->last_seen_datetime);
+            if (count($parts) < 1) continue;
+            $datePart = trim($parts[0]);
+            $carbonDate = Carbon::createFromFormat(
+                'd-m-Y',
+                $datePart
+            ); // Weekly $day=$carbonDate->format('D');
+            if (in_array($day, $weekly['labels'])) {
+                $weekly['employees'][$day]++;
+            }
+
+            // Monthly
+            $month = $carbonDate->format('M');
+            if (in_array($month, $monthly['labels'])) {
+                $monthly['employees'][$month]++;
+            }
+
+            // Yearly
+            $year = $carbonDate->format('Y');
+            if (in_array($year, $yearly['labels'])) {
+                $yearly['employees'][$year]++;
+            }
+        }
+
+        // Prepare compact chartData for JS
+        $chartData = [
+            'weekly' => [
+                'labels' => $weekly['labels'],
+                'employers' => array_values($weekly['employers']),
+                'employees' => array_values($weekly['employees'])
+            ],
+            'monthly' => [
+                'labels' => $monthly['labels'],
+                'employers' => array_values($monthly['employers']),
+                'employees' => array_values($monthly['employees'])
+            ],
+            'yearly' => [
+                'labels' => $yearly['labels'],
+                'employers' => array_values($yearly['employers']),
+                'employees' => array_values($yearly['employees'])
+            ]
+        ];
+
+        return view('templates.myadmin.index')->with([
+            'wholesaler_count' => $wholesaler_count,
+            'employee_count' => $employee_count,
+            'enquiry_count' => $enquiry_count,
+            'active_users_today_count' => $active_users_today_count,
+            'chartData' => $chartData 
+        ]);
     }
 }
