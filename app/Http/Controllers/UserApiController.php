@@ -1321,7 +1321,6 @@ class UserApiController extends Controller
     }
     public function get_employee_profile(Request $request)
     {
-
         $bdetails = Employee::where('employee_auto_id', $request->employee_auto_id)->get();
         if ($bdetails->isEmpty()) {
             return response()->json([
@@ -1394,8 +1393,9 @@ class UserApiController extends Controller
                     "adhaar_card_img_front"=> $at->adhaar_card_img_front,
                     "adhaar_card_img_back"=> $at->adhaar_card_img_back,
                     "Qualifications_data" => $quadetails,
-                    "work_details_data" => $wfdetails,
-                   
+                    "work_details_data" => $wfdetails,  
+                    "created_at" => $at->created_at,
+                    "updated_at" => $at->updated_at,
                 );
             }
             return response()->json([

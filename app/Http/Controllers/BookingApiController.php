@@ -19,6 +19,7 @@ use App\userQualificationsDetails;
 use App\userWorkDetails;
 use App\AdvanceSkills;
 use App\Height;
+use App\Admin;
 use DateTime;
 use DB;
 use Illuminate\Support\Facades\Validator;
@@ -1314,12 +1315,12 @@ class BookingApiController extends Controller
                         $result = [];
 
                         foreach ($followedCompanies as $company) {
-                               
+
                                 $employer = UserRegister::where('_id', $company->follow_id)
-                                        ->where('Register_as', 'Employer') 
+                                        ->where('Register_as', 'Employer')
                                         ->first();
 
-                              
+
                                 $companyData = $company->toArray();
                                 $companyData['employer_info'] = $employer ? $employer->toArray() : null;
 
@@ -1493,6 +1494,33 @@ class BookingApiController extends Controller
         }
 
 
+        public function getAdminProfile(Request $request)
+        {
+
+                try {
+                        // Fetch followed companies
+                        $Admin = Admin::get();
+
+                        if ($Admin->isEmpty()) {
+                                return response()->json([
+                                        'status' => 0,
+                                        'msg' => "No Data Found",
+                                ]);
+                        }
+
+                        return response()->json([
+                                'status' => 1,
+                                'msg' => "Success",
+                                'data' => $Admin,
+                        ]);
+                } catch (\Exception $e) {
+                        return response()->json([
+                                'status' => 0,
+                                'msg' => "Something went wrong! Please try again.",
+                        ], 500);
+                }
+        }
+
         public function getSubjectpdf(Request $request)
         {
                 // Validate required parameters
@@ -1511,7 +1539,7 @@ class BookingApiController extends Controller
                         if ($SubjecPdf->isEmpty()) {
                                 return response()->json([
                                         'status' => 0,
-                                        'msg' => "No Subject Pdf  Found",
+                                        'msg' => "No Subject Pdf Found",
                                 ]);
                         }
 

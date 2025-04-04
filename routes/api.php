@@ -118,5 +118,8 @@ Route::post('rate_employee', [BookingApiController::class, 'createRatingEmployee
 Route::post('get_subject', [BookingApiController::class, 'getSubject']);
 Route::post('get_subject_pdf', [BookingApiController::class, 'getSubjectpdf']);
 
+//Admin
+Route::post('get_admin_profile', [BookingApiController::class, 'getAdminProfile']);
+
 
 
