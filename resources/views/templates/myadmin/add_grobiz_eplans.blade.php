@@ -73,17 +73,17 @@
                                               					  </select>
 											
 											</div>
+                                             {{-- <div class="form-group col-md-6"> --}}
+
+                                                {{-- <label for="vat" class="form-control-label">Features (Comma Seperated)</label>  --}}
+
+                                                <input type="hidden" id="features" name="features"  class="form-control" value="Job Posting">
+
+                                                {{-- <small class="text-danger">{{ $errors->first('features') }}</small> --}}
+                                            {{-- </div> --}}
                                              <div class="form-group col-md-6">
 
-                                                <label for="vat" class="form-control-label">Features (Comma Seperated)</label> 
-
-                                                <input type="text" id="features" name="features"  class="form-control" value="">
-
-                                                <small class="text-danger">{{ $errors->first('features') }}</small>
-                                            </div>
-                                             <div class="form-group col-md-6">
-
-                                                <label for="vat" class="form-control-label">User Limit</label> 
+                                                <label for="vat" class="form-control-label">Job posting count</label> 
 
                                                 <input type="number" id="user_limit" name="user_limit"  class="form-control" value="">
 

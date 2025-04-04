@@ -97,15 +97,14 @@
                                                 <option value="Month" @if($validity_unit == "Month") selected="" @endif>Month</option>
                                                 <option value="Year" @if($validity_unit == "Year") selected="" @endif>Year</option>
 
-
                                             </select>
                                             <small class="text-danger">{{ $errors->first('validity_unit') }}</small><br/>
                                         </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="form-control-label">Features (Comma Seperated)</label> 
-                                                <input type="text" name="features" class="form-control" value="{{$features}}" >
-                                                <small class="text-danger">{{ $errors->first('features') }}</small>
-                                            </div>
+                                            {{-- <div class="form-group col-md-6"> --}}
+                                                {{-- <label class="form-control-label">Features (Comma Seperated)</label>  --}}
+                                                <input type="hidden" name="features" class="form-control" value="{{$features}}" >
+                                                {{-- <small class="text-danger">{{ $errors->first('features') }}</small> --}}
+                                            {{-- </div> --}}
                                                  <div class="form-group col-md-6">
                                                 <label class="form-control-label">Description (Comma Seperated)</label> 
 
