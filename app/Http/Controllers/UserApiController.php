@@ -1038,13 +1038,24 @@ class UserApiController extends Controller
             if ($request->get('rating') != '') {
                 $babout->rating = $request->get('rating');
             }
-            if (!empty($request->file('adhaar_card_img'))) {
-                $file = $request->file('adhaar_card_img');
-                $filename = $file->getClientOriginalName();
-                $path = public_path('images/employee_details');
-                $file->move($path, $filename);
-                $babout->adhaar_card_img = $filename;
+            if (!empty($request->file('adhaar_card_img_front'))) {
+            $file = $request->file('adhaar_card_img_front');
+            $filename = $file->getClientOriginalName();
+            $path = public_path('images/employee_details');
+            $file->move($path, $filename);
+            $babout->adhaar_card_img_front = $filename;
             }
+            if (!empty($request->file('adhaar_card_img_back'))) {
+            $file = $request->file('adhaar_card_img_back');
+            $filename = $file->getClientOriginalName();
+            $path = public_path('images/employee_details');
+            $file->move($path, $filename);
+            $babout->adhaar_card_img_back = $filename;
+            }
+            if ($request->get('last_seen_datetime') != '') {
+            $babout->last_seen_datetime = $request->get('last_seen_datetime');
+            }
+
             $babout->save();
 
             return response()->json([
@@ -1272,15 +1283,28 @@ class UserApiController extends Controller
             } else {
                 $emp->rating = '';
             }
-
-            if (!empty($request->file('adhaar_card_img'))) {
-                $file = $request->file('adhaar_card_img');
-                $filename = $file->getClientOriginalName();
-                $path = public_path('images/employee_details');
-                $file->move($path, $filename);
-                $emp->adhaar_card_img = $filename;
+            if (!empty($request->file('adhaar_card_img_front'))) {
+            $file = $request->file('adhaar_card_img_front');
+            $filename = $file->getClientOriginalName();
+            $path = public_path('images/employee_details');
+            $file->move($path, $filename);
+            $emp->adhaar_card_img_front = $filename;
             } else {
-                $emp->adhaar_card_img = null;
+            $emp->adhaar_card_img_front = '';
+            }
+            if (!empty($request->file('adhaar_card_img_back'))) {
+            $file = $request->file('adhaar_card_img_back');
+            $filename = $file->getClientOriginalName();
+            $path = public_path('images/employee_details');
+            $file->move($path, $filename);
+            $emp->adhaar_card_img_back = $filename;
+            } else {
+            $emp->adhaar_card_img_back = '';
+            }
+            if ($request->get('last_seen_datetime') != '') {
+            $emp->last_seen_datetime = $request->get('last_seen_datetime');
+            } else {
+            $emp->last_seen_datetime = '';
             }
 
             $emp->save();

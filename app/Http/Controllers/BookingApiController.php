@@ -1132,6 +1132,8 @@ class BookingApiController extends Controller
                                 'remainder_id' => $item->id,
                                 'employee_auto_id' => $item->employee_auto_id,
                                 'employer_auto_id' => $item->employer_auto_id,
+                                'call_date'=>$item->call_date,
+                                'call_time'=>$item->call_time,
                                 'employee_first_name' => $employee->first_name ?? null,
                                 'employee_last_name' => $employee->last_name ?? null,
                         ];
