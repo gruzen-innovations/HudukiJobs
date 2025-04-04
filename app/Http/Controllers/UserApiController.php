@@ -679,6 +679,10 @@ class UserApiController extends Controller
             $customer->language = $request->get('language');
         }
 
+        if ($request->has('is_hiring')) {
+        $customer->is_hiring = $request->get('is_hiring');
+        }
+
         // Handle file uploads only if present
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');

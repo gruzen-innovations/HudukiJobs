@@ -884,7 +884,7 @@ class BookingApiController extends Controller
                                         "advance_skills" => $at->advance_skills,
                                         "current_ctc" => $at->current_ctc,
                                         "expected_ctc" => $at->expected_ctc,
-                                        "open_to_work"=>$at->open_to_work,
+                                        "open_to_work" => $at->open_to_work,
                                         "average_rating" => $averageRating,
                                         "Qualifications_data" => $quadetails,
                                         "work_details_data" => $wfdetails,
@@ -1047,7 +1047,6 @@ class BookingApiController extends Controller
                                 ->first();
 
                         $follow = $follower->follow ?? 'false';
-
                         $company->follow = $follow;
                 }
 
@@ -1132,8 +1131,8 @@ class BookingApiController extends Controller
                                 'remainder_id' => $item->id,
                                 'employee_auto_id' => $item->employee_auto_id,
                                 'employer_auto_id' => $item->employer_auto_id,
-                                'call_date'=>$item->call_date,
-                                'call_time'=>$item->call_time,
+                                'call_date' => $item->call_date,
+                                'call_time' => $item->call_time,
                                 'employee_first_name' => $employee->first_name ?? null,
                                 'employee_last_name' => $employee->last_name ?? null,
                         ];
@@ -1312,10 +1311,25 @@ class BookingApiController extends Controller
                                 ]);
                         }
 
+                        $result = [];
+
+                        foreach ($followedCompanies as $company) {
+                               
+                                $employer = UserRegister::where('_id', $company->follow_id)
+                                        ->where('Register_as', 'Employer') 
+                                        ->first();
+
+                              
+                                $companyData = $company->toArray();
+                                $companyData['employer_info'] = $employer ? $employer->toArray() : null;
+
+                                $result[] = $companyData;
+                        }
+
                         return response()->json([
                                 'status' => 1,
                                 'msg' => "Success",
-                                'data' => $followedCompanies,
+                                'data' => $result,
                         ]);
                 } catch (\Exception $e) {
                         return response()->json([
