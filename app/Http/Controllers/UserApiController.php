@@ -173,6 +173,7 @@ class UserApiController extends Controller
             $UserRegister->company_website = $request->get('company_website', '');
             $UserRegister->company_address = $request->get('company_address', '');
             $UserRegister->language = $request->get('language', '');
+            $UserRegister->job_count = $request->get('job_count', '0');
             $UserRegister->register_date = date('Y-m-d');
 
             $UserRegister->save();
@@ -450,10 +451,6 @@ class UserApiController extends Controller
         }
     }
 
-
-
-
-
     // Forgot Password
     public function forgotPass(Request $request)
     {
@@ -680,7 +677,11 @@ class UserApiController extends Controller
         }
 
         if ($request->has('is_hiring')) {
-        $customer->is_hiring = $request->get('is_hiring');
+            $customer->is_hiring = $request->get('is_hiring');
+        }
+
+        if ($request->has('job_count')) {
+            $customer->job_count = $request->get('job_count');
         }
 
         // Handle file uploads only if present
@@ -1043,21 +1044,21 @@ class UserApiController extends Controller
                 $babout->rating = $request->get('rating');
             }
             if (!empty($request->file('adhaar_card_img_front'))) {
-            $file = $request->file('adhaar_card_img_front');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $babout->adhaar_card_img_front = $filename;
+                $file = $request->file('adhaar_card_img_front');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $babout->adhaar_card_img_front = $filename;
             }
             if (!empty($request->file('adhaar_card_img_back'))) {
-            $file = $request->file('adhaar_card_img_back');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $babout->adhaar_card_img_back = $filename;
+                $file = $request->file('adhaar_card_img_back');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $babout->adhaar_card_img_back = $filename;
             }
             if ($request->get('last_seen_datetime') != '') {
-            $babout->last_seen_datetime = $request->get('last_seen_datetime');
+                $babout->last_seen_datetime = $request->get('last_seen_datetime');
             }
 
             $babout->save();
@@ -1288,27 +1289,27 @@ class UserApiController extends Controller
                 $emp->rating = '';
             }
             if (!empty($request->file('adhaar_card_img_front'))) {
-            $file = $request->file('adhaar_card_img_front');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $emp->adhaar_card_img_front = $filename;
+                $file = $request->file('adhaar_card_img_front');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $emp->adhaar_card_img_front = $filename;
             } else {
-            $emp->adhaar_card_img_front = '';
+                $emp->adhaar_card_img_front = '';
             }
             if (!empty($request->file('adhaar_card_img_back'))) {
-            $file = $request->file('adhaar_card_img_back');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $emp->adhaar_card_img_back = $filename;
+                $file = $request->file('adhaar_card_img_back');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $emp->adhaar_card_img_back = $filename;
             } else {
-            $emp->adhaar_card_img_back = '';
+                $emp->adhaar_card_img_back = '';
             }
             if ($request->get('last_seen_datetime') != '') {
-            $emp->last_seen_datetime = $request->get('last_seen_datetime');
+                $emp->last_seen_datetime = $request->get('last_seen_datetime');
             } else {
-            $emp->last_seen_datetime = '';
+                $emp->last_seen_datetime = '';
             }
 
             $emp->save();
@@ -1348,7 +1349,8 @@ class UserApiController extends Controller
                         $quadetails[] = array(
                             "qualification_details_auto_id" => $qdata->_id,
                             "highest_qualification" => $qdata->highest_qualification,
-                            "course" => $qdata->course, "university" => $qdata->university,
+                            "course" => $qdata->course,
+                            "university" => $qdata->university,
                             "year_of_completion" => $qdata->year_of_completion,
                             "marks_or_percentage" => $qdata->marks_or_percentage
                         );
@@ -1451,12 +1453,13 @@ class UserApiController extends Controller
                     "advance_skills" => $at->advance_skills,
                     "current_ctc" => $at->current_ctc,
                     "expected_ctc" => $at->expected_ctc,
-                    "open_to_work"=> $at->open_to_work,
-                    "adhaar_card_img_front"=> $at->adhaar_card_img_front,
-                    "adhaar_card_img_back"=> $at->adhaar_card_img_back,
+                    "open_to_work" => $at->open_to_work,
+                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                    "mark_as_hired" => $at->mark_as_hired,
+                    "profile_completion" => strval($profile_completion),
                     "Qualifications_data" => $quadetails,
                     "work_details_data" => $wfdetails,
-                    "profile_completion" => strval($profile_completion),
                     "created_at" => $at->created_at,
                     "updated_at" => $at->updated_at,
                 );
@@ -1483,8 +1486,4 @@ class UserApiController extends Controller
             'data' => $emergencyContacts
         ], 200);
     }
-
-
-
-
 }
