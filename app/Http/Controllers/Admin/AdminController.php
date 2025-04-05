@@ -221,26 +221,32 @@ class AdminController extends Controller
     {
         $wholesaler_count = UserRegister::where('Register_as', '=', 'Employer')->count();
         $employee_count = UserRegister::where('Register_as', '=', 'Employee')->count();
-       
+
         $enquiry_count = EcommPlans::count();
 
         // Fetching all relevant data for charts
-        $employers = UserRegister::where('Register_as', 'Employer')->get(['updated_at']);
-        $employees = Employee::all(['last_seen_datetime']);
+        $employers = UserRegister::where('Register_as', 'Employer')->get(['created_at']);
+        $employees = UserRegister::where('Register_as', 'Employee')->get(['created_at']);
 
         $today = Carbon::today();
         $active_users_today_count = 0;
 
         foreach ($employees as $emp) {
-        $parts = explode(',', $emp->last_seen_datetime);
-        if (count($parts) < 1) continue; $datePart=trim($parts[0]); try { $carbonDate=Carbon::createFromFormat('d-m-Y',
-            $datePart); if ($carbonDate->isSameDay($today)) {
-            $active_users_today_count++;
-            }
+            $parts = explode(',', $emp->last_seen_datetime);
+            if (count($parts) < 1) continue;
+            $datePart = trim($parts[0]);
+            try {
+                $carbonDate = Carbon::createFromFormat(
+                    'Y-m-d',
+                    $datePart
+                );
+                if ($carbonDate->isSameDay($today)) {
+                    $active_users_today_count++;
+                }
             } catch (\Exception $e) {
-            continue; // Ignore malformed date entries
+                continue; // Ignore malformed date entries
             }
-            }
+        }
 
         // Chart Data Arrays
         $weekly = [
@@ -288,48 +294,44 @@ class AdminController extends Controller
 
         // Parse Employers
         foreach ($employers as $emp) {
-            $updated = Carbon::parse($emp->updated_at);
+            $created = Carbon::parse($emp->created_at);
 
             // Weekly
-            $day = $updated->format('D');
+            $day = $created->format('D');
             if (in_array($day, $weekly['labels'])) {
                 $weekly['employers'][$day]++;
             }
 
             // Monthly
-            $month = $updated->format('M');
+            $month = $created->format('M');
             if (in_array($month, $monthly['labels'])) {
                 $monthly['employers'][$month]++;
             }
 
             // Yearly
-            $year = $updated->format('Y');
+            $year = $created->format('Y');
             if (in_array($year, $yearly['labels'])) {
                 $yearly['employers'][$year]++;
             }
         }
 
-        // Parse Employees (last_seen_datetime = "dd-mm-yyyy,HH:MM:SS")
         foreach ($employees as $emp) {
-            $parts = explode(',', $emp->last_seen_datetime);
-            if (count($parts) < 1) continue;
-            $datePart = trim($parts[0]);
-            $carbonDate = Carbon::createFromFormat(
-                'd-m-Y',
-                $datePart
-            ); // Weekly $day=$carbonDate->format('D');
+            $created = Carbon::parse($emp->created_at);
+
+            // Weekly
+            $day = $created->format('D');
             if (in_array($day, $weekly['labels'])) {
                 $weekly['employees'][$day]++;
             }
 
             // Monthly
-            $month = $carbonDate->format('M');
+            $month = $created->format('M');
             if (in_array($month, $monthly['labels'])) {
                 $monthly['employees'][$month]++;
             }
 
             // Yearly
-            $year = $carbonDate->format('Y');
+            $year = $created->format('Y');
             if (in_array($year, $yearly['labels'])) {
                 $yearly['employees'][$year]++;
             }
@@ -359,7 +361,7 @@ class AdminController extends Controller
             'employee_count' => $employee_count,
             'enquiry_count' => $enquiry_count,
             'active_users_today_count' => $active_users_today_count,
-            'chartData' => $chartData 
+            'chartData' => $chartData
         ]);
     }
 }
