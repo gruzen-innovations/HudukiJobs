@@ -135,6 +135,18 @@ class UserApiController extends Controller
             } else {
                 $UserRegister->profile_photo = '';
             }
+            if ($request->filled('completion_status')) {
+                $UserRegister->completion_status = $request->get('completion_status');
+            } else {
+
+                $UserRegister->completion_status = null;
+            }
+
+            if ($request->get('fresher_or_experienced') != '') {
+                $UserRegister->fresher_or_experienced = $request->get('fresher_or_experienced');
+            } else {
+                $UserRegister->fresher_or_experienced = "";
+            }
             $UserRegister->login_otp = "";
             $UserRegister->company_name = $request->get('company_name', '');
             $UserRegister->company_register_date = $request->get('company_register_date') ?: null;
@@ -180,27 +192,32 @@ class UserApiController extends Controller
 
             $userss = UserRegister::where('_id', $inserted_id)->first();
 
-            $usersd_statuss = Employee::where('employee_auto_id', $inserted_id)->get();
-            if ($usersd_statuss->isNotEmpty()) {
-                foreach ($usersd_statuss as $status) {
-                    $completion_status = $status->completion_status;
+            if (empty($userss->completion_status)) {
+                $usersd_statuss = Employee::where('employee_auto_id', $inserted_id)->get();
+                if ($usersd_statuss->isNotEmpty()) {
+                    foreach ($usersd_statuss as $status) {
+                        $userss->completion_status = $status->completion_status;
+                    }
+                } else {
+                    $userss->completion_status = 'No';
                 }
-            } else {
-                $completion_status = 'No';
+                // Optional: save updated completion_status back to DB
+                $userss->save();
             }
+
 
             return response()->json([
                 'status' => '1',
                 'msg' => config('messages.success'),
                 'id' => $userss->id,
                 'Register_as' => $userss->Register_as,
-                'completion_status' => $completion_status,
+                'completion_status' =>$userss->completion_status,
 
             ]);
         }
     }
 
-
+    
     public function send_registration_contact_otp(Request $request)
     {
         if ($request->mobile_number != "") {
@@ -680,7 +697,7 @@ class UserApiController extends Controller
         }
 
         if ($request->has('is_hiring')) {
-        $customer->is_hiring = $request->get('is_hiring');
+            $customer->is_hiring = $request->get('is_hiring');
         }
 
         // Handle file uploads only if present
@@ -1043,21 +1060,21 @@ class UserApiController extends Controller
                 $babout->rating = $request->get('rating');
             }
             if (!empty($request->file('adhaar_card_img_front'))) {
-            $file = $request->file('adhaar_card_img_front');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $babout->adhaar_card_img_front = $filename;
+                $file = $request->file('adhaar_card_img_front');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $babout->adhaar_card_img_front = $filename;
             }
             if (!empty($request->file('adhaar_card_img_back'))) {
-            $file = $request->file('adhaar_card_img_back');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $babout->adhaar_card_img_back = $filename;
+                $file = $request->file('adhaar_card_img_back');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $babout->adhaar_card_img_back = $filename;
             }
             if ($request->get('last_seen_datetime') != '') {
-            $babout->last_seen_datetime = $request->get('last_seen_datetime');
+                $babout->last_seen_datetime = $request->get('last_seen_datetime');
             }
 
             $babout->save();
@@ -1288,27 +1305,27 @@ class UserApiController extends Controller
                 $emp->rating = '';
             }
             if (!empty($request->file('adhaar_card_img_front'))) {
-            $file = $request->file('adhaar_card_img_front');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $emp->adhaar_card_img_front = $filename;
+                $file = $request->file('adhaar_card_img_front');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $emp->adhaar_card_img_front = $filename;
             } else {
-            $emp->adhaar_card_img_front = '';
+                $emp->adhaar_card_img_front = '';
             }
             if (!empty($request->file('adhaar_card_img_back'))) {
-            $file = $request->file('adhaar_card_img_back');
-            $filename = $file->getClientOriginalName();
-            $path = public_path('images/employee_details');
-            $file->move($path, $filename);
-            $emp->adhaar_card_img_back = $filename;
+                $file = $request->file('adhaar_card_img_back');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images/employee_details');
+                $file->move($path, $filename);
+                $emp->adhaar_card_img_back = $filename;
             } else {
-            $emp->adhaar_card_img_back = '';
+                $emp->adhaar_card_img_back = '';
             }
             if ($request->get('last_seen_datetime') != '') {
-            $emp->last_seen_datetime = $request->get('last_seen_datetime');
+                $emp->last_seen_datetime = $request->get('last_seen_datetime');
             } else {
-            $emp->last_seen_datetime = '';
+                $emp->last_seen_datetime = '';
             }
 
             $emp->save();
@@ -1389,11 +1406,11 @@ class UserApiController extends Controller
                     "advance_skills" => $at->advance_skills,
                     "current_ctc" => $at->current_ctc,
                     "expected_ctc" => $at->expected_ctc,
-                    "open_to_work"=> $at->open_to_work,
-                    "adhaar_card_img_front"=> $at->adhaar_card_img_front,
-                    "adhaar_card_img_back"=> $at->adhaar_card_img_back,
+                    "open_to_work" => $at->open_to_work,
+                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
                     "Qualifications_data" => $quadetails,
-                    "work_details_data" => $wfdetails,  
+                    "work_details_data" => $wfdetails,
                     "created_at" => $at->created_at,
                     "updated_at" => $at->updated_at,
                 );
@@ -1420,8 +1437,4 @@ class UserApiController extends Controller
             'data' => $emergencyContacts
         ], 200);
     }
-
-  
-
-   
 }

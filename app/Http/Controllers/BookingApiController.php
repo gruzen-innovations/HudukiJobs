@@ -764,14 +764,6 @@ class BookingApiController extends Controller
                         $ctc_ids = explode(',', $request->get('ctc'));
                         array_push($conditions, array('field' => 'expected_ctc', 'value' => $ctc_ids, 'condition' => 'orwhereIn'));
                 }
-                if ($request->get('open_to_work') != "") {
-                        array_push($conditions, array(
-                                'field' => 'open_to_work',
-                                'value' => [$request->get('open_to_work')],
-                                'condition' =>
-                                'orwhereIn'
-                        ));
-                }
                 if ($request->get('skills') != "") {
                         $skills_ids = explode(',', $request->get('skills'));
                         foreach ($skills_ids as $skill) {
@@ -786,7 +778,8 @@ class BookingApiController extends Controller
 
 
 
-                $emplists = Employee::where(function ($q) use ($conditions) {
+                $emplists = Employee::where('open_to_work', 'yes')
+                ->where(function ($q) use ($conditions) {
                         foreach ($conditions as $key) {
                                 if ($key['condition'] == "whereIn") {
                                         $q->whereIn($key['field'], $key['value']);

@@ -221,10 +221,8 @@ class AdminController extends Controller
     {
         $wholesaler_count = UserRegister::where('Register_as', '=', 'Employer')->count();
         $employee_count = UserRegister::where('Register_as', '=', 'Employee')->count();
-       
         $enquiry_count = EcommPlans::count();
 
-        // Fetching all relevant data for charts
         $employers = UserRegister::where('Register_as', 'Employer')->get(['updated_at']);
         $employees = Employee::all(['last_seen_datetime']);
 
@@ -232,45 +230,45 @@ class AdminController extends Controller
         $active_users_today_count = 0;
 
         foreach ($employees as $emp) {
-        $parts = explode(',', $emp->last_seen_datetime);
-        if (count($parts) < 1) continue; $datePart=trim($parts[0]); try { $carbonDate=Carbon::createFromFormat('d-m-Y',
-            $datePart); if ($carbonDate->isSameDay($today)) {
-            $active_users_today_count++;
-            }
+            $parts = explode(',', $emp->last_seen_datetime);
+            if (count($parts) < 1) continue;
+            $datePart = trim($parts[0]);
+            try {
+                $carbonDate = Carbon::createFromFormat(
+                    'd-m-Y',
+                    $datePart
+                );
+                if ($carbonDate->isSameDay($today)) {
+                    $active_users_today_count++;
+                }
             } catch (\Exception $e) {
-            continue; // Ignore malformed date entries
+                continue;
             }
-            }
+        }
 
-        // Chart Data Arrays
+        // === WEEKLY (Last 7 Days) ===
         $weekly = [
             'labels' => [],
             'employers' => [],
             'employees' => []
         ];
 
+        $weeklyDateKeys = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $key = $date->format('Y-m-d');
+            $weekly['labels'][] = $date->format('D'); // Mon, Tue...
+            $weekly['employers'][$key] = 0;
+            $weekly['employees'][$key] = 0;
+            $weeklyDateKeys[] = $key;
+        }
+
+        // === MONTHLY (Last 4 Months) ===
         $monthly = [
             'labels' => [],
             'employers' => [],
             'employees' => []
         ];
-
-        $yearly = [
-            'labels' => [],
-            'employers' => [],
-            'employees' => []
-        ];
-
-        // Initialize Weekly Labels (last 7 days)
-        $startOfWeek = Carbon::now()->startOfWeek();
-        for ($i = 0; $i < 7; $i++) {
-            $day = $startOfWeek->copy()->addDays($i)->format('D');
-            $weekly['labels'][] = $day;
-            $weekly['employers'][$day] = 0;
-            $weekly['employees'][$day] = 0;
-        }
-
-        // Initialize Monthly Labels (last 4 months)
         for ($i = 3; $i >= 0; $i--) {
             $month = Carbon::now()->subMonths($i)->format('M');
             $monthly['labels'][] = $month;
@@ -278,7 +276,12 @@ class AdminController extends Controller
             $monthly['employees'][$month] = 0;
         }
 
-        // Initialize Yearly Labels (last 3 years)
+        // === YEARLY (Last 3 Years) ===
+        $yearly = [
+            'labels' => [],
+            'employers' => [],
+            'employees' => []
+        ];
         for ($i = 2; $i >= 0; $i--) {
             $year = Carbon::now()->subYears($i)->format('Y');
             $yearly['labels'][] = $year;
@@ -286,61 +289,79 @@ class AdminController extends Controller
             $yearly['employees'][$year] = 0;
         }
 
-        // Parse Employers
+        // === EMPLOYERS PARSING ===
         foreach ($employers as $emp) {
             $updated = Carbon::parse($emp->updated_at);
+            $dayKey = $updated->format('Y-m-d');
 
             // Weekly
-            $day = $updated->format('D');
-            if (in_array($day, $weekly['labels'])) {
-                $weekly['employers'][$day]++;
+            if (array_key_exists($dayKey, $weekly['employers'])) {
+                $weekly['employers'][$dayKey]++;
             }
 
             // Monthly
             $month = $updated->format('M');
-            if (in_array($month, $monthly['labels'])) {
+            if (array_key_exists($month, $monthly['employers'])) {
                 $monthly['employers'][$month]++;
             }
 
             // Yearly
             $year = $updated->format('Y');
-            if (in_array($year, $yearly['labels'])) {
+            if (array_key_exists($year, $yearly['employers'])) {
                 $yearly['employers'][$year]++;
             }
         }
 
-        // Parse Employees (last_seen_datetime = "dd-mm-yyyy,HH:MM:SS")
+        // === EMPLOYEES PARSING ===
         foreach ($employees as $emp) {
             $parts = explode(',', $emp->last_seen_datetime);
             if (count($parts) < 1) continue;
             $datePart = trim($parts[0]);
-            $carbonDate = Carbon::createFromFormat(
-                'd-m-Y',
-                $datePart
-            ); // Weekly $day=$carbonDate->format('D');
-            if (in_array($day, $weekly['labels'])) {
-                $weekly['employees'][$day]++;
-            }
+            try {
+                $carbonDate = Carbon::createFromFormat(
+                    'd-m-Y',
+                    $datePart
+                );
+                $dayKey = $carbonDate->format('Y-m-d');
 
-            // Monthly
-            $month = $carbonDate->format('M');
-            if (in_array($month, $monthly['labels'])) {
-                $monthly['employees'][$month]++;
-            }
+                // Weekly
+                if (array_key_exists($dayKey, $weekly['employees'])) {
+                    $weekly['employees'][$dayKey]++;
+                }
 
-            // Yearly
-            $year = $carbonDate->format('Y');
-            if (in_array($year, $yearly['labels'])) {
-                $yearly['employees'][$year]++;
+                // Monthly
+                $month = $carbonDate->format('M');
+                if (array_key_exists($month, $monthly['employees'])) {
+                    $monthly['employees'][$month]++;
+                }
+
+                // Yearly
+                $year = $carbonDate->format('Y');
+                if (array_key_exists($year, $yearly['employees'])) {
+                    $yearly['employees'][$year]++;
+                }
+            } catch (\Exception $e) {
+                continue;
             }
         }
 
-        // Prepare compact chartData for JS
+        // === Convert Weekly Keys to Labels (Mon, Tue...) ===
+        $weekly_labels = [];
+        $weekly_employers = [];
+        $weekly_employees = [];
+
+        foreach ($weekly['employers'] as $date => $count) {
+            $weekly_labels[] = Carbon::parse($date)->format('D');
+            $weekly_employers[] = $count;
+            $weekly_employees[] = $weekly['employees'][$date];
+        }
+
+        // === Prepare Chart Data for JS ===
         $chartData = [
             'weekly' => [
-                'labels' => $weekly['labels'],
-                'employers' => array_values($weekly['employers']),
-                'employees' => array_values($weekly['employees'])
+                'labels' => $weekly_labels,
+                'employers' => $weekly_employers,
+                'employees' => $weekly_employees
             ],
             'monthly' => [
                 'labels' => $monthly['labels'],
@@ -359,7 +380,7 @@ class AdminController extends Controller
             'employee_count' => $employee_count,
             'enquiry_count' => $enquiry_count,
             'active_users_today_count' => $active_users_today_count,
-            'chartData' => $chartData 
+            'chartData' => $chartData
         ]);
     }
 }
