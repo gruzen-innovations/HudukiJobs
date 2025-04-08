@@ -382,7 +382,7 @@ class BookingApiController extends Controller
                         ]);
                 }
         }
-        // Update job status 
+        // Update job status
         public function update_job_status(Request $request)
         {
                 $actjobs = Jobs::where('employer_auto_id', $request->employer_auto_id)->where('_id', '=', $request->job_auto_id)->where('active_status', '!=', $request->status)->get();
@@ -721,14 +721,7 @@ class BookingApiController extends Controller
         }
         public function get_candidate_search(Request $request)
         {
-                $location = $request->input('location');
-                $job_role = $request->input('job_role');
-                $experience = $request->input('experience');
-                $job_type = $request->input('job_type');
-                $gender = $request->input('gender');
-                $ctc = $request->input('ctc');
-                $open_to_work = $request->input('open_to_work');
-                $skills = $request->input('skills');
+
                 $rating = $request->input('rating');
                 // $searchlists = explode(',', $search);
                 $conditions = array();
@@ -856,6 +849,7 @@ class BookingApiController extends Controller
                                 $ratings = RateEmployee::where('employee_auto_id', $at->employee_auto_id)->get();
                                 $averageRating = $ratings->isNotEmpty() ? $ratings->avg('rate') : null;
                                 $atdetails[] = array(
+                                        "_id" => $at->_id,
                                         "resume" => $at->resume,
                                         "video_resume" => $at->video_resume,
                                         "profile_picture" => $at->profile_picture,
@@ -882,6 +876,7 @@ class BookingApiController extends Controller
                                         "adhaar_card_img_front" => $at->adhaar_card_img_front,
                                         "adhaar_card_img_back" => $at->adhaar_card_img_back,
                                         "last_seen_datetime" => $at->last_seen_datetime,
+                                        "mark_as_hired" => $at->mark_as_hired ,
                                         "average_rating" => $averageRating,
                                         "Qualifications_data" => $quadetails,
                                         "work_details_data" => $wfdetails,

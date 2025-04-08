@@ -185,6 +185,7 @@ class UserApiController extends Controller
             $UserRegister->company_website = $request->get('company_website', '');
             $UserRegister->company_address = $request->get('company_address', '');
             $UserRegister->language = $request->get('language', '');
+            $UserRegister->job_count = $request->get('job_count', '0');
             $UserRegister->register_date = date('Y-m-d');
 
             $UserRegister->save();
@@ -467,10 +468,6 @@ class UserApiController extends Controller
         }
     }
 
-
-
-
-
     // Forgot Password
     public function forgotPass(Request $request)
     {
@@ -698,6 +695,10 @@ class UserApiController extends Controller
 
         if ($request->has('is_hiring')) {
             $customer->is_hiring = $request->get('is_hiring');
+        }
+
+        if ($request->has('job_count')) {
+            $customer->job_count = $request->get('job_count');
         }
 
         // Handle file uploads only if present
@@ -1336,6 +1337,7 @@ class UserApiController extends Controller
             ]);
         }
     }
+
     public function get_employee_profile(Request $request)
     {
         $bdetails = Employee::where('employee_auto_id', $request->employee_auto_id)->get();
@@ -1361,7 +1363,14 @@ class UserApiController extends Controller
                 $qdetailss = userQualificationsDetails::where('employee_auto_id', '=', $at->employee_auto_id)->get();
                 if ($qdetailss->isNotEmpty()) {
                     foreach ($qdetailss as $qdata) {
-                        $quadetails[] = array("qualification_details_auto_id" => $qdata->_id, "highest_qualification" => $qdata->highest_qualification, "course" => $qdata->course, "university" => $qdata->university, "year_of_completion" => $qdata->year_of_completion, "marks_or_percentage" => $qdata->marks_or_percentage);
+                        $quadetails[] = array(
+                            "qualification_details_auto_id" => $qdata->_id,
+                            "highest_qualification" => $qdata->highest_qualification,
+                            "course" => $qdata->course,
+                            "university" => $qdata->university,
+                            "year_of_completion" => $qdata->year_of_completion,
+                            "marks_or_percentage" => $qdata->marks_or_percentage
+                        );
                     }
                 } else {
                     $quadetails = array();
@@ -1371,11 +1380,66 @@ class UserApiController extends Controller
                 $wdetailss = userWorkDetails::where('employee_auto_id', '=', $at->employee_auto_id)->get();
                 if ($wdetailss->isNotEmpty()) {
                     foreach ($wdetailss as $wdata) {
-                        $wfdetails[] = array("work_details_auto_id" => $wdata->_id, "company_name" => $wdata->company_name, "designation" => $wdata->designation, "work_from" => $wdata->work_from, "project_count" => $wdata->project_count, "total_year_experience" => $wdata->total_year_experience, "description_of_project" => $wdata->description_of_project);
+                        $wfdetails[] = array(
+                            "work_details_auto_id" => $wdata->_id,
+                            "company_name" => $wdata->company_name,
+                            "designation" => $wdata->designation,
+                            "work_from" => $wdata->work_from,
+                            "project_count" => $wdata->project_count,
+                            "total_year_experience" => $wdata->total_year_experience,
+                            "description_of_project" => $wdata->description_of_project
+                        );
                     }
                 } else {
                     $wfdetails = array();
                 }
+
+
+                $base_fields = [
+                    $at->resume ?? '',
+                    $at->video_resume ?? '',
+                    $at->profile_picture ?? '',
+                    $at->first_name ?? '',
+                    $at->last_name ?? '',
+                    $at->gender ?? '',
+                    $at->date_of_birth ?? '',
+                    $at->address ?? '',
+                    $at->city ?? '',
+                    $at->pincode ?? '',
+                    $at->skills ?? '',
+                    $at->prefered_jobrole ?? '',
+                    $at->prefered_job_locaion ?? '',
+                    $at->preferred_job_type ?? '',
+                    $at->preferred_shift ?? '',
+                    $at->field_of_experience ?? '',
+                    $at->total_year_experience ?? '',
+                    $at->employment_type ??  '',
+                    $at->description_of_project ?? '',
+                    $at->advance_skills ?? '',
+                    $at->current_ctc ?? '',
+                    $at->expected_ctc ?? '',
+                    $at->open_to_work ?? '',
+                    $at->adhaar_card_img_front ?? '',
+                    $at->adhaar_card_img_back ?? '',
+                    $email_id ?? '',
+                    $mobile_number ?? '',
+                ];
+
+                $filled_count = 0;
+                $total_count = count($base_fields);
+
+                foreach ($base_fields as $field) {
+                    if (!empty($field)) {
+                        $filled_count++;
+                    }
+                }
+
+                $base_percent = ($filled_count / $total_count) * 50; // base info weight = 50%
+
+                $education_percent = !empty($quadetails) ? 25 : 0;
+                $work_percent = !empty($wfdetails) ? 25 : 0;
+
+                $profile_completion = round($base_percent + $education_percent + $work_percent);
 
                 $details[] = array(
                     "_id" => $at->_id,
@@ -1406,9 +1470,9 @@ class UserApiController extends Controller
                     "advance_skills" => $at->advance_skills,
                     "current_ctc" => $at->current_ctc,
                     "expected_ctc" => $at->expected_ctc,
-                    "open_to_work" => $at->open_to_work,
-                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
-                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                    "open_to_work"=> $at->open_to_work,
+                    "adhaar_card_img_front"=> $at->adhaar_card_img_front,
+                    "adhaar_card_img_back"=> $at->adhaar_card_img_back,
                     "Qualifications_data" => $quadetails,
                     "work_details_data" => $wfdetails,
                     "created_at" => $at->created_at,

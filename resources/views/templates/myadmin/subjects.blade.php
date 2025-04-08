@@ -24,7 +24,7 @@
         <div class="my-4 text-start">
 
 
-            <button type="button" class="btn btn-primary text-white ms-2" data-bs-toggle="offcanvas"
+            <button type="button" class="btn btn-secondary text-white ms-2" data-bs-toggle="offcanvas"
                 data-bs-target="#addCategoryCanvas" aria-controls="addCategoryCanvas">
                 <i class="fa fa-plus" title="Add Subject"></i> Add Subject
             </button>

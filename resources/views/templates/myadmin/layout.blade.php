@@ -29,7 +29,7 @@
 
     <meta http-equiv="Cache-Control" content="no-cache">
 
-    <link rel="icon" href="{{ asset('templates-assets/myadminweb/images/logo.png') }}" type="image/jpg">
+    <link rel="icon" href="{{ asset('images/admin-logo.jpg') }}" type="image/jpg">
 
 
 
@@ -78,10 +78,10 @@
 
                 </button>
 
-                <a class="navbar-brand" href="#">Huduki Jobs
-
-
-                    <!--<img src="{{ asset('templates-assets/myadminweb/images/homelogo.png') }}" alt="Logo">-->
+                <a class="navbar-brand" href="#">
+                    <img src="{{ asset('images/admin-logo.jpg') }}" alt="Logo"
+                        style="height: 40px; width: 40px; margin-right: 8px; border-radius: 50%">
+                    <span>Huduki Jobs</span>
 
                 </a>
 
@@ -104,9 +104,6 @@
                         <a href="{{ url('home') }}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
 
                     </li>
-
-
-
 
                     <li>
 

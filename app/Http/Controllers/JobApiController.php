@@ -118,7 +118,7 @@ class JobApiController extends Controller
                                 }
                                 $ratings = RateEmployee::where('employee_auto_id', $at->employee_auto_id)->get();
                                 $averageRating = $ratings->isNotEmpty() ? $ratings->avg('rate') : null;
-                                
+
                                 $atdetails[] = array(
                                     "resume" => $at->resume,
                                     "video_resume" => $at->video_resume,
@@ -144,14 +144,14 @@ class JobApiController extends Controller
                                     "preferred_shift" => $at->preferred_shift,
                                     "current_ctc" => $at->current_ctc,
                                     "expected_ctc" => $at->expected_ctc,
-                                    "open_to_work"=>$at->open_to_work,
-                                    "adhaar_card_img_front"=>$at->adhaar_card_img_front,
-                                    "adhaar_card_img_back"=>$at->adhaar_card_img_back,
-                                    "last_seen_datetime"=>$at->last_seen_datetime,
+                                    "open_to_work" => $at->open_to_work,
+                                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                                    "last_seen_datetime" => $at->last_seen_datetime,
                                     "average_rating" => $averageRating,
                                     "Qualifications_data" => $quadetails,
                                     "work_details_data" => $wfdetails,
-                                    
+
                                 );
                             }
                         } else {
@@ -531,6 +531,7 @@ class JobApiController extends Controller
                                 $ratings = RateEmployee::where('employee_auto_id', $at->employee_auto_id)->get();
                                 $averageRating = $ratings->isNotEmpty() ? $ratings->avg('rate') : null;
                                 $atdetailsss[] = array(
+                                    "_id" => $at->_id,
                                     "resume" => $at->resume,
                                     "video_resume" => $at->video_resume,
                                     "profile_picture" => $at->profile_picture,
@@ -555,10 +556,11 @@ class JobApiController extends Controller
                                     "current_ctc" => $at->current_ctc,
                                     "expected_ctc" => $at->expected_ctc,
                                     "preferred_shift" => $at->preferred_shift,
-                                    "open_to_work"=>$at->open_to_work,
-                                    "adhaar_card_img_front"=>$at->adhaar_card_img_front,
-                                    "adhaar_card_img_back"=>$at->adhaar_card_img_back,
-                                    "last_seen_datetime"=>$at->last_seen_datetime,
+                                    "open_to_work" => $at->open_to_work,
+                                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                                    "last_seen_datetime" => $at->last_seen_datetime,
+                                    "mark_as_hired" => $at->mark_as_hired,
                                     "average_rating" => $averageRating,
                                     "Qualifications_data" => $quadetails,
                                     "work_details_data" => $wfdetails
@@ -869,10 +871,10 @@ class JobApiController extends Controller
                                     "current_ctc" => $at->current_ctc,
                                     "expected_ctc" => $at->expected_ctc,
                                     "preferred_shift" => $at->preferred_shift,
-                                    "open_to_work"=>$at->open_to_work,
-                                    "adhaar_card_img_front"=>$at->adhaar_card_img_front,
-                                    "adhaar_card_img_back"=>$at->adhaar_card_img_back,
-                                    "last_seen_datetime"=>$at->last_seen_datetime,
+                                    "open_to_work" => $at->open_to_work,
+                                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                                    "last_seen_datetime" => $at->last_seen_datetime,
                                     "average_rating" => $averageRating,
                                     "Qualifications_data" => $quadetails,
                                     "work_details_data" => $wfdetails
