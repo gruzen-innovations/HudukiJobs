@@ -221,50 +221,60 @@ class AdminController extends Controller
     {
         $wholesaler_count = UserRegister::where('Register_as', '=', 'Employer')->count();
         $employee_count = UserRegister::where('Register_as', '=', 'Employee')->count();
-       
+
         $enquiry_count = EcommPlans::count();
 
         // Fetching all relevant data for charts
-        $employers = UserRegister::where('Register_as', 'Employer')->get(['updated_at']);
-        $employees = Employee::all(['last_seen_datetime']);
+        $employers = UserRegister::where('Register_as', 'Employer')->get(['created_at']);
+        $employees = UserRegister::where('Register_as', 'Employee')->get(['created_at']);
 
         $today = Carbon::today();
         $active_users_today_count = 0;
 
         foreach ($employees as $emp) {
-        $parts = explode(',', $emp->last_seen_datetime);
-        if (count($parts) < 1) continue; $datePart=trim($parts[0]); try { $carbonDate=Carbon::createFromFormat('d-m-Y',
-            $datePart); if ($carbonDate->isSameDay($today)) {
-            $active_users_today_count++;
-            }
+            $parts = explode(',', $emp->last_seen_datetime);
+            if (count($parts) < 1) continue;
+            $datePart = trim($parts[0]);
+            try {
+                $carbonDate = Carbon::createFromFormat(
+                    'Y-m-d',
+                    $datePart
+                );
+                if ($carbonDate->isSameDay($today)) {
+                    $active_users_today_count++;
+                }
             } catch (\Exception $e) {
-            continue; // Ignore malformed date entries
+                continue; // Ignore malformed date entries
             }
         }
 
-        // === WEEKLY (Last 7 Days) ===
+        // Chart Data Arrays
         $weekly = [
             'labels' => [],
             'employers' => [],
             'employees' => []
         ];
 
-        $weeklyDateKeys = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::today()->subDays($i);
-            $key = $date->format('Y-m-d');
-            $weekly['labels'][] = $date->format('D'); // Mon, Tue...
-            $weekly['employers'][$key] = 0;
-            $weekly['employees'][$key] = 0;
-            $weeklyDateKeys[] = $key;
-        }
-
-        // === MONTHLY (Last 4 Months) ===
         $monthly = [
             'labels' => [],
             'employers' => [],
             'employees' => []
         ];
+
+        $yearly = [
+            'labels' => [],
+            'employers' => [],
+            'employees' => []
+        ];
+
+        // Initialize Weekly Labels (last 7 days)
+        for ($i = 6; $i >= 0; $i--) {
+        $day = Carbon::now()->subDays($i)->format('D');
+        $weekly['labels'][] = $day;
+        $weekly['employers'][$day] = 0;
+        $weekly['employees'][$day] = 0;
+        }
+        // Initialize Monthly Labels (last 4 months)
         for ($i = 3; $i >= 0; $i--) {
             $month = Carbon::now()->subMonths($i)->format('M');
             $monthly['labels'][] = $month;
@@ -272,12 +282,7 @@ class AdminController extends Controller
             $monthly['employees'][$month] = 0;
         }
 
-        // === YEARLY (Last 3 Years) ===
-        $yearly = [
-            'labels' => [],
-            'employers' => [],
-            'employees' => []
-        ];
+        // Initialize Yearly Labels (last 3 years)
         for ($i = 2; $i >= 0; $i--) {
             $year = Carbon::now()->subYears($i)->format('Y');
             $yearly['labels'][] = $year;
@@ -285,50 +290,46 @@ class AdminController extends Controller
             $yearly['employees'][$year] = 0;
         }
 
-        // === EMPLOYERS PARSING ===
+        // Parse Employers
         foreach ($employers as $emp) {
-            $updated = Carbon::parse($emp->updated_at);
+            $created = Carbon::parse($emp->created_at);
 
             // Weekly
-            $day = $updated->format('D');
+            $day = $created->format('D');
             if (in_array($day, $weekly['labels'])) {
                 $weekly['employers'][$day]++;
             }
 
             // Monthly
-            $month = $updated->format('M');
+            $month = $created->format('M');
             if (in_array($month, $monthly['labels'])) {
                 $monthly['employers'][$month]++;
             }
 
             // Yearly
-            $year = $updated->format('Y');
+            $year = $created->format('Y');
             if (in_array($year, $yearly['labels'])) {
                 $yearly['employers'][$year]++;
             }
         }
 
-        // Parse Employees (last_seen_datetime = "dd-mm-yyyy,HH:MM:SS")
         foreach ($employees as $emp) {
-            $parts = explode(',', $emp->last_seen_datetime);
-            if (count($parts) < 1) continue;
-            $datePart = trim($parts[0]);
-            $carbonDate = Carbon::createFromFormat(
-                'd-m-Y',
-                $datePart
-            ); // Weekly $day=$carbonDate->format('D');
+            $created = Carbon::parse($emp->created_at);
+
+            // Weekly
+            $day = $created->format('D');
             if (in_array($day, $weekly['labels'])) {
                 $weekly['employees'][$day]++;
             }
 
             // Monthly
-            $month = $carbonDate->format('M');
+            $month = $created->format('M');
             if (in_array($month, $monthly['labels'])) {
                 $monthly['employees'][$month]++;
             }
 
             // Yearly
-            $year = $carbonDate->format('Y');
+            $year = $created->format('Y');
             if (in_array($year, $yearly['labels'])) {
                 $yearly['employees'][$year]++;
             }
@@ -337,9 +338,9 @@ class AdminController extends Controller
         // Prepare compact chartData for JS
         $chartData = [
             'weekly' => [
-                'labels' => $weekly_labels,
-                'employers' => $weekly_employers,
-                'employees' => $weekly_employees
+                'labels' => $weekly['labels'],
+                'employers' => array_values($weekly['employers']),
+                'employees' => array_values($weekly['employees'])
             ],
             'monthly' => [
                 'labels' => $monthly['labels'],
