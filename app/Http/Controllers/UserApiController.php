@@ -135,12 +135,6 @@ class UserApiController extends Controller
             } else {
                 $UserRegister->profile_photo = '';
             }
-            if ($request->filled('completion_status')) {
-                $UserRegister->completion_status = $request->get('completion_status');
-            } else {
-
-                $UserRegister->completion_status = null;
-            }
 
             if ($request->get('fresher_or_experienced') != '') {
                 $UserRegister->fresher_or_experienced = $request->get('fresher_or_experienced');
@@ -149,7 +143,8 @@ class UserApiController extends Controller
             }
             $UserRegister->login_otp = "";
             $UserRegister->company_name = $request->get('company_name', '');
-            $UserRegister->company_register_date = $request->get('company_register_date') ?: null;
+            $UserRegister->company_register_date = $request->get('company_register_date') ?? '';
+
             if (!empty($request->file('company_logo'))) {
                 $file = $request->file('company_logo');
                 $filename = $file->getClientOriginalName();
@@ -191,34 +186,56 @@ class UserApiController extends Controller
             $UserRegister->save();
             $inserted_id = $UserRegister->id;
 
-            $userss = UserRegister::where('_id', $inserted_id)->first();
+            $emp = new Employee();
 
-            if (empty($userss->completion_status)) {
-                $usersd_statuss = Employee::where('employee_auto_id', $inserted_id)->get();
-                if ($usersd_statuss->isNotEmpty()) {
-                    foreach ($usersd_statuss as $status) {
-                        $userss->completion_status = $status->completion_status;
-                    }
-                } else {
-                    $userss->completion_status = 'No';
-                }
-                // Optional: save updated completion_status back to DB
-                $userss->save();
-            }
+            $emp->employee_auto_id = $inserted_id;
+            $emp->resume = '';
+            $emp->video_resume = '';
+            $emp->profile_picture = '';
+            $emp->first_name = $request->get('first_name', '');
+            $emp->middle_name = "";
+            $emp->last_name = "";
+            $emp->gender = "";
+            $emp->date_of_birth = "";
+            $emp->address = "";
+            $emp->city = "";
+            $emp->pincode = "";
+            $emp->fresher_or_experienced = $request->get('fresher_or_experienced') ?? '';
+            $emp->skills = "";
+            $emp->prefered_jobrole = "";
+            $emp->prefered_job_locaion = "";
+            $emp->preferred_job_type = "";
+            $emp->field_of_experience = "";
+            $emp->employment_type = "";
+            $emp->advance_skills = "";
+            $emp->current_ctc = "";
+            $emp->expected_ctc = "";
+            $emp->completion_status = $request->completion_status ?? "No";
+            $emp->preferred_shift = "";
+            $emp->open_to_work = '';
+            $emp->mark_as_hired = '';
+            $emp->language = '';
+            $emp->rating = '';
+            $emp->adhaar_card_img_front = '';
+            $emp->adhaar_card_img_back = '';
+            $emp->last_seen_datetime = '';
+
+            $emp->save();
 
 
             return response()->json([
                 'status' => '1',
                 'msg' => config('messages.success'),
-                'id' => $userss->id,
-                'Register_as' => $userss->Register_as,
-                'completion_status' =>$userss->completion_status,
+                'id' => $UserRegister->id,
+                'Register_as' => $UserRegister->Register_as,
+                'completion_status' => $emp->completion_status,
+                'employee_details_auto_id' => $emp->id,
 
             ]);
         }
     }
 
-    
+
     public function send_registration_contact_otp(Request $request)
     {
         if ($request->mobile_number != "") {
@@ -1470,13 +1487,14 @@ class UserApiController extends Controller
                     "advance_skills" => $at->advance_skills,
                     "current_ctc" => $at->current_ctc,
                     "expected_ctc" => $at->expected_ctc,
-                    "open_to_work"=> $at->open_to_work,
-                    "adhaar_card_img_front"=> $at->adhaar_card_img_front,
-                    "adhaar_card_img_back"=> $at->adhaar_card_img_back,
-                    "Qualifications_data" => $quadetails,
-                    "work_details_data" => $wfdetails,
+                    "open_to_work" => $at->open_to_work,
+                    "adhaar_card_img_front" => $at->adhaar_card_img_front,
+                    "adhaar_card_img_back" => $at->adhaar_card_img_back,
+                    "profile_completion" => strval($profile_completion),
                     "created_at" => $at->created_at,
                     "updated_at" => $at->updated_at,
+                    "Qualifications_data" => $quadetails,
+                    "work_details_data" => $wfdetails,
                 );
             }
             return response()->json([
