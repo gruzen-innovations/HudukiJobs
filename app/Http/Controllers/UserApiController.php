@@ -202,7 +202,7 @@ class UserApiController extends Controller
                 } else {
                     $userss->completion_status = 'No';
                 }
-                // Optional: save updated completion_status back to DB
+                
                 $userss->save();
             }
 
