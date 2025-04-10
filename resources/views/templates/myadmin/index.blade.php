@@ -158,7 +158,11 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const label = chartData[range].labels[index];
-                            window.location.href = `/wholesalers?range=${range}&period=${label}`;
+                            const cleanedOrigin = window.location.origin.replace(/\/+$/,
+                            ''); // removes trailing slash
+                            const url = `${cleanedOrigin}/wholesalers?range=${range}&period=${label}`;
+                            window.location.href = url;
+
                         }
                     },
                     responsive: true,
@@ -193,7 +197,11 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const label = chartData[range].labels[index];
-                            window.location.href = `/employee?range=${range}&period=${label}`;
+                            const basePath = window.location.origin.replace(/\/+$/,
+                            '');
+                            const url = `${basePath}/employee?range=${range}&period=${label}`;
+                            window.location.href = url;
+
                         }
                     },
                     responsive: true,
