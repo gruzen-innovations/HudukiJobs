@@ -1571,4 +1571,27 @@ class BookingApiController extends Controller
             ], 500);
         }
     }
+
+
+    public function update_logo(Request $request)
+    {
+        try {
+
+            if ($request->hasFile('logo')) {
+                $file = $request->file('logo');
+                $filename = $file->getClientOriginalName();
+                $path = public_path('images');
+                $file->move($path, $filename);
+            }
+            return response()->json([
+                'status' => 1,
+                'msg' => "Success",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 0,
+                'msg' => "Something went wrong! Please try again.",
+            ], 500);
+        }
+    }
 }

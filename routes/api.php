@@ -120,3 +120,4 @@ Route::post('get_subject_pdf', [BookingApiController::class, 'getSubjectpdf']);
 
 //Admin
 Route::post('get_admin_profile', [BookingApiController::class, 'getAdminProfile']);
+Route::post('update_logo', [BookingApiController::class, 'update_logo']);

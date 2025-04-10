@@ -6,26 +6,10 @@
     </script>
 @endif
 
-<!-- Optional but sometimes required -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-
-<!-- DataTables with Buttons bundled -->
+<!-- ✅ DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-
-<!-- Required for Excel export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
-<!-- Optional -->
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
 
 @extends('templates.myadmin.layout')
 @section('content')
@@ -42,14 +26,11 @@
                     @endif
                     <div class="card">
                         <div class="card-header">
-
                             <strong class="card-title">Employer Lists</strong>
-
-                            <!--  <a href="add-user" class="right"><i class="fa fa-plus-square"></i> Add Users</a> -->
                         </div>
                         @include('templates.myadmin.messages')
                         <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered table-responsive-sm">
+                            <table id="data-table" class="table table-striped table-bordered table-responsive-sm">
                                 <thead>
                                     <tr>
                                         <th>No</th>
@@ -71,8 +52,6 @@
                                                 <td>{{ $customer->email_id }}</td>
                                                 <td>{{ $customer->mobile_number }}</td>
                                                 <td>{{ $customer->status }}</td>
-                                                <!-- <td><a href="#" class="switch" title="" data-toggle="tooltip" data-original-title="status"><i class="fa"></i></a></td> -->
-
                                                 <td>
                                                     <a href="{{ url('edit-user') }}/{{ $customer->id }}"
                                                         class="btn btn-primary" title="Edit" data-toggle="tooltip"
@@ -81,7 +60,6 @@
                                                     <a href="{{ url('view_posted_jobs_list') }}/{{ $customer->id }}"
                                                         class="btn btn-warning" title="Jobs" data-toggle="tooltip"
                                                         data-original-title="View"><i class="fa fa-eye"></i></a>
-
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -95,14 +73,37 @@
         </div><!-- .animated -->
     </div><!-- .content -->
 
+    <!-- ✅ jQuery (must come first) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <!-- ✅ DataTables + dependencies (must come after jQuery) -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <!-- ✅ DataTable init -->
     <script>
         $(document).ready(function() {
-            $('#test-table').DataTable({
+
+            $('#data-table').DataTable({
                 dom: 'Bfrtip',
                 buttons: [{
-                    extend: 'excelHtml5',
-                    title: 'Test Export'
-                }]
+                        extend: 'excelHtml5',
+                        title: 'Employer Export'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Employer Export'
+                    },
+                    {
+                        extend: 'print',
+                        title: 'Employer Export'
+                    }
+                ]
             });
         });
     </script>
