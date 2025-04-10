@@ -30,38 +30,32 @@ class WholeSalerController extends Controller
             $range = $request->input('range');
             $period = $request->input('period');
 
-            if ($range === 'weekly') {
-                // Parse the full date stdd($date->startOfDay());
-                $date = Carbon::parse($period);
-                $query->whereBetween('created_at', [
-                    new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
-                    new \MongoDB\BSON\UTCDateTime($date->endOfDay())
-                ]);
-            } else {
-                // Use $dateToString for monthly/yearly filtering
-                switch ($range) {
-                    case 'monthly':
-                        $format = "%b"; // e.g., "Apr"
-                        break;
+            try {
+                if ($range === 'weekly') {
+                    $date = Carbon::parse($period);
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfDay())
+                    ]);
+                } elseif ($range === 'monthly') {
+                    $month = Carbon::createFromFormat('M', $period)->month;
+                    $year = now()->year;
+                    $date = Carbon::create($year, $month, 1);
 
-                    case 'yearly':
-                        $format = "%Y"; // e.g., "2025"
-                        break;
-
-                    default:
-                        $format = null;
-                }
-
-                if ($format) {
-                    $query = $query->whereRaw([
-                        '$expr' => [
-                            '$eq' => [
-                                ['$dateToString' => ['format' => $format, 'date' => '$created_at']],
-                                $period
-                            ]
-                        ]
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfMonth()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfMonth())
+                    ]);
+                } elseif ($range === 'yearly') {
+                    $date = Carbon::createFromFormat('Y', $period);
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfYear()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfYear())
                     ]);
                 }
+            } catch (\Exception $e) {
+                // Handle parse errors gracefully
+                return redirect()->back()->with('error', 'Invalid date format provided.');
             }
         }
 
@@ -122,38 +116,32 @@ class WholeSalerController extends Controller
             $range = $request->input('range');
             $period = $request->input('period');
 
-            if ($range === 'weekly') {
-                // Parse the full date string like "2025-04-07"
-                $date = Carbon::parse($period);
-                $query->whereBetween('created_at', [
-                    new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
-                    new \MongoDB\BSON\UTCDateTime($date->endOfDay())
-                ]);
-            } else {
-                // Use $dateToString for monthly/yearly filtering
-                switch ($range) {
-                    case 'monthly':
-                        $format = "%b"; // e.g., "Apr"
-                        break;
+            try {
+                if ($range === 'weekly') {
+                    $date = Carbon::parse($period);
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfDay())
+                    ]);
+                } elseif ($range === 'monthly') {
+                    $month = Carbon::createFromFormat('M', $period)->month;
+                    $year = now()->year;
+                    $date = Carbon::create($year, $month, 1);
 
-                    case 'yearly':
-                        $format = "%Y"; // e.g., "2025"
-                        break;
-
-                    default:
-                        $format = null;
-                }
-
-                if ($format) {
-                    $query = $query->whereRaw([
-                        '$expr' => [
-                            '$eq' => [
-                                ['$dateToString' => ['format' => $format, 'date' => '$created_at']],
-                                $period
-                            ]
-                        ]
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfMonth()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfMonth())
+                    ]);
+                } elseif ($range === 'yearly') {
+                    $date = Carbon::createFromFormat('Y', $period);
+                    $query->whereBetween('created_at', [
+                        new \MongoDB\BSON\UTCDateTime($date->startOfYear()),
+                        new \MongoDB\BSON\UTCDateTime($date->endOfYear())
                     ]);
                 }
+            } catch (\Exception $e) {
+                // Handle parse errors gracefully
+                return redirect()->back()->with('error', 'Invalid date format provided.');
             }
         }
 
