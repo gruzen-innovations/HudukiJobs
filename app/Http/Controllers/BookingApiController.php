@@ -382,6 +382,7 @@ class BookingApiController extends Controller
             ]);
         }
     }
+
     // Update job status
     public function update_job_status(Request $request)
     {
@@ -407,6 +408,7 @@ class BookingApiController extends Controller
             ]);
         }
     }
+
     public function get_job_list_employer(Request $request)
     {
 
@@ -439,6 +441,7 @@ class BookingApiController extends Controller
             ]);
         }
     }
+
     public function get_walkin_job(Request $request)
     {
 
@@ -1186,13 +1189,7 @@ class BookingApiController extends Controller
 
         try {
 
-            $remainderId = new ObjectId($request->get('remainder_auto_id'));
-
-
-            $remainder = CandidateRemainder::where('_id', $remainderId)
-                ->where('employer_auto_id', $request->get('employer_auto_id'))
-                ->first();
-
+            $remainder = CandidateRemainder::find($request->get('remainder_auto_id'));
 
             if (!$remainder) {
                 return response()->json([

@@ -24,7 +24,7 @@ use App\Http\Controllers\Admin\NotificationsController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\QWPController;
 use App\Http\Controllers\Admin\HMBIController;
-
+use App\Http\Controllers\Admin\JobsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -198,7 +198,7 @@ Route::get('/add-video', [SettingController::class, 'add_video']);
 Route::post('/store-video', [SettingController::class, 'store_video']);
 Route::post('delete-video/{id}', [SettingController::class, 'delete_video']);
 
-
+// Subjects and details
 Route::get('subjects',[SettingController::class,'getSubjects']);
 Route::post('add-subject',[SettingController::class,'addSubject']);
 Route::post('update-subject',[SettingController::class,'updateSubject']);
@@ -206,6 +206,14 @@ Route::get('delete-subject/{id}',[SettingController::class,'deleteSubject']);
 
 Route::post('add-subject-pdf',[SettingController::class,'addSubjectPdf']);
 Route::get('delete-subject-pdf/{id}',[SettingController::class,'deleteSubjectPdf']);
+
+// Jobs
+Route::get('jobs',[JobsController::class,'jobs']);
+Route::get('add-job',[JobsController::class,'add_job']);
+Route::post('store-job',[JobsController::class,'store_job']);
+Route::get('edit-job/{id}',[JobsController::class,'edit_job']);
+Route::post('update-job',[JobsController::class,'update_job']);
+Route::get('delete-job/{id}',[JobsController::class,'delete_job']);
 
 //test api resp
 Route::get('test_resp', [HMBIController::class, 'test_resp']);
