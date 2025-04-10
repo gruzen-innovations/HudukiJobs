@@ -232,18 +232,15 @@ class AdminController extends Controller
 
         foreach ($employeesdetails as $emp) {
             $parts = explode(',', $emp->last_seen_datetime);
-            if (count($parts) < 1) continue;
-            $datePart = trim($parts[0]);
+            if (count($parts) < 2) continue;
+            $datePart = trim($parts[1]); 
             try {
-                $carbonDate = Carbon::createFromFormat(
-                    'Y-m-d',
-                    $datePart
-                );
+                $carbonDate = Carbon::createFromFormat('d M Y', $datePart);
                 if ($carbonDate->isSameDay($today)) {
                     $active_users_today_count++;
                 }
             } catch (\Exception $e) {
-                continue; // Ignore malformed date entries
+                continue;
             }
         }
 
