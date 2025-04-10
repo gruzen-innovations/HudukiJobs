@@ -31,9 +31,12 @@ class WholeSalerController extends Controller
             $period = $request->input('period');
 
             if ($range === 'weekly') {
-                // Parse the full date string like "2025-04-07"
+                // Parse the full date stdd($date->startOfDay());
                 $date = Carbon::parse($period);
-                $query->whereBetween('created_at', [$date->startOfDay(), $date->endOfDay()]);
+                $query->whereBetween('created_at', [
+                    new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
+                    new \MongoDB\BSON\UTCDateTime($date->endOfDay())
+                ]);
             } else {
                 // Use $dateToString for monthly/yearly filtering
                 switch ($range) {
@@ -122,7 +125,10 @@ class WholeSalerController extends Controller
             if ($range === 'weekly') {
                 // Parse the full date string like "2025-04-07"
                 $date = Carbon::parse($period);
-                $query->whereBetween('created_at', [$date->startOfDay(), $date->endOfDay()]);
+                $query->whereBetween('created_at', [
+                    new \MongoDB\BSON\UTCDateTime($date->startOfDay()),
+                    new \MongoDB\BSON\UTCDateTime($date->endOfDay())
+                ]);
             } else {
                 // Use $dateToString for monthly/yearly filtering
                 switch ($range) {
@@ -162,10 +168,10 @@ class WholeSalerController extends Controller
                 if (!isset($emp->last_seen_datetime)) return false;
 
                 $parts = explode(',', $emp->last_seen_datetime);
-                $datePart = trim($parts[0]);
-
+                if (count($parts) < 2) return false;
+                $datePart = trim($parts[1]);
                 try {
-                    $parsedDate = Carbon::parse($datePart)->format('Y-m-d');
+                    $parsedDate = Carbon::createFromFormat('d M Y', $datePart)->format('Y-m-d');
                     return $parsedDate === $today;
                 } catch (\Exception $e) {
                     return false;

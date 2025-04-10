@@ -232,18 +232,15 @@ class AdminController extends Controller
 
         foreach ($employeesdetails as $emp) {
             $parts = explode(',', $emp->last_seen_datetime);
-            if (count($parts) < 1) continue;
-            $datePart = trim($parts[0]);
+            if (count($parts) < 2) continue;
+            $datePart = trim($parts[1]); 
             try {
-                $carbonDate = Carbon::createFromFormat(
-                    'Y-m-d',
-                    $datePart
-                );
+                $carbonDate = Carbon::createFromFormat('d M Y', $datePart);
                 if ($carbonDate->isSameDay($today)) {
                     $active_users_today_count++;
                 }
             } catch (\Exception $e) {
-                continue; // Ignore malformed date entries
+                continue;
             }
         }
 
@@ -268,10 +265,10 @@ class AdminController extends Controller
 
         // Initialize Weekly Labels (last 7 days)
         for ($i = 6; $i >= 0; $i--) {
-        $date = Carbon::now()->subDays($i)->format('Y-m-d'); 
-        $weekly['labels'][] = $date;
-        $weekly['employers'][$date] = 0;
-        $weekly['employees'][$date] = 0;
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $weekly['labels'][] = $date;
+            $weekly['employers'][$date] = 0;
+            $weekly['employees'][$date] = 0;
         }
         // Initialize Monthly Labels (last 4 months)
         for ($i = 3; $i >= 0; $i--) {
@@ -296,7 +293,7 @@ class AdminController extends Controller
             // Weekly
             $day = $created->format('Y-m-d'); // ✅ Full date
             if (in_array($day, $weekly['labels'])) {
-            $weekly['employers'][$day]++;
+                $weekly['employers'][$day]++;
             }
 
             // Monthly
@@ -318,7 +315,7 @@ class AdminController extends Controller
             // Weekly
             $day = $created->format('Y-m-d'); // ✅ Full date
             if (in_array($day, $weekly['labels'])) {
-            $weekly['employees'][$day]++;
+                $weekly['employees'][$day]++;
             }
 
             // Monthly
