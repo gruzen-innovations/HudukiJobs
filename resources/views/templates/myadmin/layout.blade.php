@@ -118,6 +118,12 @@
 
                     <li>
 
+                        <a href="{{ url('jobs') }}"> <i class="menu-icon fa fa-briefcase"></i>Job Lists </a>
+
+                    </li>
+
+                    <li>
+
                         <a href="{{ url('training-videos') }}"> <i class="menu-icon fa fa-video-camera"></i>
                             Training Videos</a>
 
