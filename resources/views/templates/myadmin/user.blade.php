@@ -23,9 +23,17 @@
         <div class="animated fadeIn">
             <div class="row">
                 <div class="col-md-12">
+                     @if (request()->has('range') && request()->has('period'))
+                                <div class="alert alert-info">
+                                    Showing Employers for <strong>{{ request()->range }}</strong> -
+                                    <strong>{{ request()->period }}</strong>
+                                </div>
+                            @endif
                     <div class="card">
                         <div class="card-header">
+
                             <strong class="card-title">Employer Lists</strong>
+                           
                             <!--  <a href="add-user" class="right"><i class="fa fa-plus-square"></i> Add Users</a> -->
                         </div>
                         @include('templates.myadmin.messages')

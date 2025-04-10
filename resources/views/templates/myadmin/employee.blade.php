@@ -10,6 +10,12 @@
     <div class="animated fadeIn">
         <div class="row">
             <div class="col-md-12">
+                @if (request()->has('range') && request()->has('period'))
+                                <div class="alert alert-info">
+                                    Showing Employers for <strong>{{ request()->range }}</strong> -
+                                    <strong>{{ request()->period }}</strong>
+                                </div>
+                            @endif
                 <div class="card">
                     <div class="card-header">
                         <strong class="card-title">Employee Lists</strong>

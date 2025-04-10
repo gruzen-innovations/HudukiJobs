@@ -49,7 +49,6 @@ Route::post('adminlogin', [AdminController::class, 'store']);
 Route::get('logout', [AdminController::class, 'logout']);
 Route::get('/home', [AdminController::class, 'home']);
 
-
 // profile
 Route::get('/profile', [AdminController::class, 'index']);
 Route::post('/update-profile', [AdminController::class, 'update_profile']);

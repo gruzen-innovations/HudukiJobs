@@ -215,8 +215,6 @@ class AdminController extends Controller
 
 
 
-
-
     public function home()
     {
         $wholesaler_count = UserRegister::where('Register_as', '=', 'Employer')->count();
@@ -227,11 +225,12 @@ class AdminController extends Controller
         // Fetching all relevant data for charts
         $employers = UserRegister::where('Register_as', 'Employer')->get(['created_at']);
         $employees = UserRegister::where('Register_as', 'Employee')->get(['created_at']);
+        $employeesdetails = Employee::all();
 
         $today = Carbon::today();
         $active_users_today_count = 0;
 
-        foreach ($employees as $emp) {
+        foreach ($employeesdetails as $emp) {
             $parts = explode(',', $emp->last_seen_datetime);
             if (count($parts) < 1) continue;
             $datePart = trim($parts[0]);
@@ -269,10 +268,10 @@ class AdminController extends Controller
 
         // Initialize Weekly Labels (last 7 days)
         for ($i = 6; $i >= 0; $i--) {
-        $day = Carbon::now()->subDays($i)->format('D');
-        $weekly['labels'][] = $day;
-        $weekly['employers'][$day] = 0;
-        $weekly['employees'][$day] = 0;
+        $date = Carbon::now()->subDays($i)->format('Y-m-d'); 
+        $weekly['labels'][] = $date;
+        $weekly['employers'][$date] = 0;
+        $weekly['employees'][$date] = 0;
         }
         // Initialize Monthly Labels (last 4 months)
         for ($i = 3; $i >= 0; $i--) {
@@ -295,9 +294,9 @@ class AdminController extends Controller
             $created = Carbon::parse($emp->created_at);
 
             // Weekly
-            $day = $created->format('D');
+            $day = $created->format('Y-m-d'); // ✅ Full date
             if (in_array($day, $weekly['labels'])) {
-                $weekly['employers'][$day]++;
+            $weekly['employers'][$day]++;
             }
 
             // Monthly
@@ -317,9 +316,9 @@ class AdminController extends Controller
             $created = Carbon::parse($emp->created_at);
 
             // Weekly
-            $day = $created->format('D');
+            $day = $created->format('Y-m-d'); // ✅ Full date
             if (in_array($day, $weekly['labels'])) {
-                $weekly['employees'][$day]++;
+            $weekly['employees'][$day]++;
             }
 
             // Monthly
