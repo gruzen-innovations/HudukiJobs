@@ -158,10 +158,11 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const label = chartData[range].labels[index];
-                            const cleanedOrigin = window.location.origin.replace(/\/+$/,
-                            ''); // removes trailing slash
-                            const url = `${cleanedOrigin}/wholesalers?range=${range}&period=${label}`;
+                            const cleanedOrigin = window.location.origin.replace(/\/+$/, ''); // removes trailing slash
+                            const url =
+                            `${cleanedOrigin}/HudukiJobs/wholesalers?range=${range}&period=${label}`;
                             window.location.href = url;
+
 
                         }
                     },
@@ -197,10 +198,10 @@
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const label = chartData[range].labels[index];
-                            const basePath = window.location.origin.replace(/\/+$/,
-                            '');
+                            const basePath = window.location.origin + '/HudukiJobs';
                             const url = `${basePath}/employee?range=${range}&period=${label}`;
                             window.location.href = url;
+
 
                         }
                     },
